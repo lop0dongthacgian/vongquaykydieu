@@ -47,7 +47,7 @@ section.active {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3), 
                  -1px -1px 2px rgba(255, 255, 255, 0.5); /* Bóng đổ vừa phải */
     letter-spacing: 2px; /* Khoảng cách giữa các chữ */
-    font-size: 2.5rem; /* Kích thước font cụ thể cho tiêu đề chính */
+    /* font-size: 2.5rem; /* Dòng này đã được bình luận/xóa để Tailwind CSS có hiệu lực */
     animation: bounceIn 1s ease-out; /* Thêm hiệu ứng động khi xuất hiện */
 }
 
