@@ -31,21 +31,21 @@
         <section id="instructions-screen">
             <h2 class="text-3xl font-bold text-indigo-600 mb-6">Hướng Dẫn Chơi</h2>
             <div class="text-left text-gray-700 space-y-4 mb-8 max-w-lg">
-                <p class="instruction-item"><i class="fas fa-lightbulb icon-blue"></i> 1. Nhấn nút **"Quay"** để vòng quay chọn ngẫu nhiên một câu hỏi và số điểm thưởng.</p>
+                <p class="instruction-item"><i class="fas fa-lightbulb icon-blue"></i> 1. Nhấn nút "Quay" để vòng quay chọn ngẫu nhiên một câu hỏi và số điểm thưởng.</p>
                 <p class="instruction-item"><i class="fas fa-question-circle icon-green"></i> 2. Khi vòng quay dừng lại, một câu hỏi tiếng Anh sẽ hiện ra.</p>
                 <p class="instruction-item"><i class="fas fa-brain icon-orange"></i> 3. Dựa vào số điểm bạn quay được, hãy đoán từ tiếng Anh tương ứng với câu hỏi.</p>
-                <p class="instruction-item"><i class="fas fa-keyboard icon-purple"></i> 4. **Nhập từng chữ cái hoặc cả từ** vào ô nhập và nhấn **"Nhập"** để kiểm tra.</p>
+                <p class="instruction-item"><i class="fas fa-keyboard icon-purple"></i> 4. Nhập từng chữ cái hoặc cả từ vào ô nhập và nhấn "Nhập" để kiểm tra.</p>
                 <ul class="list-disc list-inside ml-8 space-y-1">
                     <li class="instruction-sub-item"><i class="fas fa-check-circle icon-success"></i> Nếu đoán đúng chữ cái, bạn sẽ nhận được điểm tương ứng với ô quay.</li>
                     <li class="instruction-sub-item"><i class="fas fa-star icon-yellow"></i> Nếu đoán đúng cả từ, bạn sẽ nhận được điểm thưởng lớn hơn.</li>
                     <li class="instruction-sub-item"><i class="fas fa-times-circle icon-error"></i> Nếu đoán sai, bạn sẽ bị trừ 300 điểm.</li>
                 </ul>
-                <p class="instruction-item"><i class="fas fa-trophy icon-gold"></i> 5. **Quy tắc đặc biệt từ vòng quay:**</p>
+                <p class="instruction-item"><i class="fas fa-trophy icon-gold"></i> 5. Quy tắc đặc biệt từ vòng quay:</p>
                 <ul class="list-disc list-inside ml-8 space-y-1">
-                    <li class="instruction-sub-item"><i class="fas fa-coins icon-double"></i> **"Nhân Đôi"**: Nếu đoán đúng từ, tổng điểm hiện tại của bạn sẽ được nhân đôi.</li>
-                    <li class="instruction-sub-item"><i class="fas fa-dice icon-lucky"></i> **"May Mắn"**: Bạn sẽ được cộng ngay 300 điểm và một chữ cái ngẫu nhiên trong từ sẽ được tiết lộ miễn phí.</li>
+                    <li class="instruction-sub-item"><i class="fas fa-coins icon-double"></i> "Nhân Đôi": Nếu đoán đúng từ, tổng điểm hiện tại của bạn sẽ được nhân đôi.</li>
+                    <li class="instruction-sub-item"><i class="fas fa-dice icon-lucky"></i> "May Mắn": Bạn sẽ được cộng ngay 300 điểm và một chữ cái ngẫu nhiên trong từ sẽ được hiển thị tự động.</li>
                 </ul>
-                <p class="instruction-item"><i class="fas fa-magic icon-reveal"></i> 6. **Chức năng "Mua chữ"**: Bạn có thể nhấn **"Mua chữ"** để tiết lộ một chữ cái bất kỳ trong từ (sẽ trừ 500 điểm).</p>
+                <p class="instruction-item"><i class="fas fa-magic icon-reveal"></i> 6. Chức năng "Mua chữ": Bạn có thể nhấn "Mua chữ" để tiết lộ một chữ cái bất kỳ trong từ (sẽ trừ 500 điểm).</p>
                 <p class="instruction-item"><i class="fas fa-award icon-finish"></i> 7. Hoàn thành từ bằng cách đoán đúng tất cả các chữ cái.</p>
                 <p class="font-semibold text-lg text-red-600 instruction-item"><i class="fas fa-exclamation-triangle icon-warning"></i> Lưu ý: Điểm của bạn có thể là số âm!</p>
             </div>
@@ -70,7 +70,7 @@
             </div>
 
             <div class="word-input-area" id="word-input-area">
-                <input type="text" id="word-guess-input" class="word-guess-input" placeholder="Nhập chữ hoặc từ của bạn" maxlength="20" disabled>
+                <input type="text" id="word-guess-input" class="word-guess-input" placeholder="Nhập một chữ cái mà bạn đoán" maxlength="20" disabled>
                 <div class="flex flex-wrap justify-center gap-4">
                     <button id="submit-guess-button" class="game-button bg-blue-500 hover:bg-blue-600" disabled>
                         <i class="fas fa-check"></i> <span>Nhập</span>
@@ -137,10 +137,10 @@
         // Sound effects - Loaded specific notification sounds
         const soundEffects = {
             tb1: new Audio('audio/tb1.wav'), // Mời bạn quay để chọn câu hỏi và số điểm
-            tb2: new Audio('audio/tb2.wav'), // Hay quá! Tiếp tục nhé! Bạn quay được [số điểm] điểm.
-            tb3: new Audio('audio/tb3.wav'), // Tuyệt vời! Nhân đôi điểm! Đoán đúng từ sẽ nhân đôi điểm!
+            tb2: new Audio('audio/tb2.wav'), // Mời bạn xem câu hỏi và nhập một chữ cái! Bạn quay được [số điểm] điểm.
+            tb3: new Audio('audio/tb3.wav'), // Tuyệt vời! Nhân đôi điểm! Đoán đúng từ sẽ được nhân đôi điểm!
             tb4: new Audio('audio/tb4.wav'), // Một chữ đã mở và ba trăm điểm đã được cộng vào!
-            tb5: new Audio('audio/tb5.wav'), // Vui lòng nhập chữ hoặc từ!
+            tb5: new Audio('audio/tb5.wav'), // Vui lòng nhập một chữ cái!
             tb6: new Audio('audio/tb6.wav'), // Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng!
             tb7: new Audio('audio/tb7.wav'), // Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!
             tb8: new Audio('audio/tb8.wav'), // Chúc mừng! Bạn đã hoàn thành toàn bộ từ!
@@ -150,7 +150,7 @@
             tb12: new Audio('audio/tb12.wav'), // Bạn đã mua một chữ với giá 500 điểm! Một chữ đã được tiết lộ.
             tb13: new Audio('audio/tb13.wav'), // Không còn chữ nào để mua!
             tb14: new Audio('audio/tb14.wav'), // Để chọn từ mới, mời bạn nhấn nút "Quay"
-            tb15: new Audio('audio/tb15.wav')  // Bạn đã thoát trò chơi.
+            tb15: new Audio('audio/tb15.wav')  // Bạn đã thoát trò chơi, hẹn gặp lại nhé!
         };
 
         // DOM elements
@@ -226,7 +226,7 @@
         }
 
         /**
-         * Updates the state (enabled/disabled) of action buttons.
+         * Updates the state (enabled/disabled) of action buttons and input placeholder.
          */
         function updateButtonStates() {
             // Buy Letter button
@@ -254,9 +254,11 @@
             if (canGuess && currentQuestion) {
                 wordGuessInput.disabled = false;
                 submitGuessButton.disabled = false;
+                wordGuessInput.placeholder = "Nhập một chữ cái mà bạn đoán"; // Default placeholder
             } else {
                 wordGuessInput.disabled = true;
                 submitGuessButton.disabled = true;
+                wordGuessInput.placeholder = "Nhấn \"Quay\" trước khi nhập"; // New placeholder when disabled
             }
         }
 
@@ -783,7 +785,7 @@
             backgroundMusic.currentTime = 0; // Rewind music
 
             updateButtonStates(); // Ensure buttons are in correct state
-            showNotification('Bạn đã thoát trò chơi.', 'info', 3000, 'tb15');
+            showNotification('Bạn đã thoát trò chơi, hẹn gặp lại!', 'info', 3000, 'tb15');
         }
 
 
