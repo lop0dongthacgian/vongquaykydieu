@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-</head>
+    </head>
 <body class="selection:bg-pink-300 selection:text-pink-900">
     <div class="container">
         <div id="notification-container"></div>
@@ -56,7 +56,7 @@
 
         <section id="game-screen">
             <h1 class="text-2xl sm:text-3xl font-bold text-indigo-700 mb-4">VÒNG QUAY KỲ DIỆU</h1>
-            <p class="text-2xl font-semibold text-green-700 mb-6">Điểm của bạn: <span id="player-score">0</span></p>
+            <p class="score-display-text font-semibold text-green-700 mb-6"><span id="question-count-display">Câu hỏi số 0/0.</span> Điểm của bạn: <span id="player-score">0</span></p>
 
             <div class="wheel-container">
                 <div class="wheel" id="wheel">
@@ -70,7 +70,7 @@
             </div>
 
             <div class="word-input-area" id="word-input-area">
-                <input type="text" id="word-guess-input" class="word-guess-input" placeholder="Nhập một chữ cái mà bạn đoán" maxlength="20" disabled>
+                <input type="text" id="word-guess-input" class="word-guess-input" placeholder="Vui lòng nhấn &quot;Quay&quot; trước khi nhập" maxlength="20" disabled>
                 <div class="flex flex-wrap justify-center gap-4">
                     <button id="submit-guess-button" class="game-button bg-blue-500 hover:bg-blue-600" disabled>
                         <i class="fas fa-check"></i> <span>Nhập</span>
@@ -129,6 +129,12 @@
         let currentSegmentValue = 0; // Stores the points/type awarded by the wheel
         let hasQuestionBeenSelected = false; // Track if a question has been selected for the current round
 
+        // Question tracking
+        let currentQuestionNumber = 0; // The number of the current question being played (1-indexed)
+        let totalQuestionsAnswered = 0; // Total unique questions successfully completed
+        let totalQuestionsAvailable = questions.length; // Total questions in the array
+
+
         // Audio elements - Assuming these paths are correct for local files
         const backgroundMusic = new Audio('audio/nhacnen.mp3');
         backgroundMusic.loop = true;
@@ -165,6 +171,7 @@
         const exitGameButton = document.getElementById('exit-game-button'); 
 
         const playerScoreDisplay = document.getElementById('player-score');
+        const questionCountDisplay = document.getElementById('question-count-display'); // New element
         const wheelElement = document.getElementById('wheel');
         const spinButton = document.getElementById('spin-button');
         const questionDisplay = document.getElementById('question-display');
@@ -221,8 +228,15 @@
          */
         function updateScore(points) {
             playerScore += points;
-            playerScoreDisplay.textContent = playerScore;
-            updateButtonStates();
+            updateGameInfoDisplay(); // Call new function to update all game info
+        }
+
+        /**
+         * Updates the display for question number and player score.
+         */
+        function updateGameInfoDisplay() {
+             questionCountDisplay.textContent = `Câu hỏi số ${currentQuestionNumber}/${totalQuestionsAvailable}.`;
+             playerScoreDisplay.textContent = playerScore;
         }
 
         /**
@@ -258,7 +272,7 @@
             } else {
                 wordGuessInput.disabled = true;
                 submitGuessButton.disabled = true;
-                wordGuessInput.placeholder = "Nhấn \"Quay\" trước khi nhập"; // New placeholder when disabled
+                wordGuessInput.placeholder = "Vui lòng nhấn \"Quay\" trước khi nhập"; // New placeholder when disabled
             }
         }
 
@@ -267,9 +281,20 @@
          */
         function getRandomQuestion() {
             let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * questions.length);
-            } while (currentQuestion && questions[randomIndex] === currentQuestion); // Avoid immediate repeats
+            // Ensure we don't pick the same question twice in a row if possible, and we haven't exhausted all questions
+            if (questions.length === totalQuestionsAnswered) {
+                // All questions have been answered, might need to reset or inform user
+                showNotification("Bạn đã trả lời hết tất cả các câu hỏi! Bắt đầu lại từ đầu.", "info", 5000);
+                totalQuestionsAnswered = 0; // Reset for next cycle if user keeps playing
+                currentQuestionNumber = 0;
+            }
+            
+            // To pick a truly random question that hasn't been answered in this "cycle"
+            // This requires a more complex tracking mechanism, for now, we'll just pick randomly
+            // without explicit "already answered" tracking per session to keep it simple.
+            // If you need to ensure no repeats until ALL are done, a 'usedQuestions' array would be needed.
+
+            randomIndex = Math.floor(Math.random() * questions.length);
             return questions[randomIndex];
         }
 
@@ -326,6 +351,8 @@
 
             // Only clear question display if it's a new word selection round
             if (!hasQuestionBeenSelected) {
+                currentQuestionNumber++; // Increment question number for a new question
+                updateGameInfoDisplay(); // Update display immediately
                 questionDisplay.textContent = "Mời bạn quay để chọn câu hỏi và số điểm";
                 questionDisplay.classList.add('flashing');
                 wordDisplayContainer.innerHTML = ''; // Clear previous word display
@@ -541,6 +568,7 @@
             const currentRevealedStripped = revealedLetters.filter(char => char !== ' ').join('');
 
             if (currentRevealedStripped === plainAnswerStripped) {
+                totalQuestionsAnswered++; // Increment total answered questions
                 // Clear any existing notifications before showing new ones
                 notificationContainer.innerHTML = ''; 
 
@@ -634,6 +662,7 @@
             const currentRevealedStripped = revealedLetters.filter(char => char !== ' ').join('');
             
             if (currentRevealedStripped === plainAnswerStripped) {
+                totalQuestionsAnswered++; // Increment total answered questions
                 // Clear any existing notifications before showing new ones
                 notificationContainer.innerHTML = ''; 
 
@@ -749,6 +778,7 @@
             canGuess = false; // Player must spin again
             isSpinning = false; // Ensure not spinning
             updateButtonStates(); // Re-enable spin button
+            updateGameInfoDisplay(); // Update display with new question count
 
             // Cuộn lên đầu màn hình game để người dùng thấy vòng quay ngay lập lập tức
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -768,6 +798,8 @@
             canGuess = false;
             currentSegmentValue = 0;
             hasQuestionBeenSelected = false; // Reset for a clean exit
+            currentQuestionNumber = 0; // Reset question count
+            totalQuestionsAnswered = 0; // Reset total answered
 
             playerScoreDisplay.textContent = '0';
             questionDisplay.textContent = "Mời bạn quay để chọn câu hỏi và số điểm";
@@ -785,6 +817,7 @@
             backgroundMusic.currentTime = 0; // Rewind music
 
             updateButtonStates(); // Ensure buttons are in correct state
+            updateGameInfoDisplay(); // Update display for welcome screen
             showNotification('Bạn đã thoát trò chơi, hẹn gặp lại!', 'info', 3000, 'tb15');
         }
 
@@ -793,6 +826,7 @@
         window.onload = () => {
             renderWheel(); // Render wheel segments on load
             updateButtonStates(); // Initialize button state
+            updateGameInfoDisplay(); // Initial display of game info
         };
 
         toggleInstructionsButton.addEventListener('click', () => {
@@ -814,7 +848,9 @@
             console.log("Start Game clicked.");
             welcomeScreen.classList.remove('active');
             gameScreen.classList.add('active');
-            updateScore(0); // Reset score for new game
+            playerScore = 0; // Reset score
+            currentQuestionNumber = 0; // Reset question count
+            totalQuestionsAnswered = 0; // Reset total answered
             resetGameRound(); // Use the reset function for a clean start
             // Music already handled by toggleMusicButton's initial state if it was played on welcome screen
         });
