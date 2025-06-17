@@ -58,7 +58,6 @@ section.active {
     100% { transform: scale(1); }
 }
 
-
 /* --- Buttons --- */
 .game-button {
     padding: 0.8rem 2rem;
@@ -433,6 +432,59 @@ section.active {
     }
 }
 
+/* --- Instruction Screen Specific Styles for Icons and Colors --- */
+.instruction-item {
+    display: flex;
+    align-items: flex-start; /* Align icon and text at the top */
+    gap: 0.75rem; /* Space between icon and text */
+    margin-bottom: 0.5rem; /* Space between items */
+    font-size: 1.1rem; /* Slightly larger font for readability */
+    line-height: 1.5; /* Good line spacing */
+}
+
+.instruction-sub-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-left: 0; /* Override default list margin */
+}
+
+.instruction-item i,
+.instruction-sub-item i {
+    font-size: 1.3em; /* Make icons slightly larger than text */
+    line-height: inherit; /* Inherit line height for vertical alignment */
+    flex-shrink: 0; /* Prevent icons from shrinking */
+}
+
+/* Icon Colors */
+.icon-blue { color: #3498db; } /* Bright Blue */
+.icon-green { color: #2ecc71; } /* Emerald Green */
+.icon-orange { color: #f39c12; } /* Orange */
+.icon-purple { color: #9b59b6; } /* Amethyst */
+.icon-success { color: #27ae60; } /* Darker Green for success */
+.icon-yellow { color: #f1c40f; } /* Sunflower Yellow */
+.icon-error { color: #e74c3c; } /* Alizarin Red for error */
+.icon-gold { color: #ffd700; } /* Gold */
+.icon-double { color: #e67e22; } /* Carrot Orange for Double */
+.icon-lucky { color: #1abc9c; } /* Turquoise for Lucky */
+.icon-reveal { color: #34495e; } /* Wet Asphalt for Reveal */
+.icon-finish { color: #8e44ad; } /* Wisteria for Finish */
+.icon-warning { color: #e67e22; } /* Carrot Orange for Warning */
+
+/* --- Copyright Info at the bottom of game screen --- */
+.copyright-info-bottom {
+    position: relative; /* Đảm bảo nó nằm trong flow của container */
+    margin-top: 1.5rem; /* Điều chỉnh khoảng cách nếu cần */
+    text-align: center;
+    color: #666;
+    font-size: 0.75rem; /* Rất nhỏ, phù hợp với thông tin bản quyền */
+    padding-top: 0.5rem; /* Để tạo khoảng cách với nội dung trên */
+    border-top: 1px solid #eee; /* Đường kẻ mỏng phía trên */
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
     .container {
@@ -491,5 +543,15 @@ section.active {
     #notification-container {
         top: 10px;
         max-width: 90%;
+    }
+
+    .instruction-item,
+    .instruction-sub-item {
+        font-size: 0.95rem; /* Smaller font on mobile */
+    }
+
+    .instruction-item i,
+    .instruction-sub-item i {
+        font-size: 1.2em;
     }
 }
