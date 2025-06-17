@@ -15,7 +15,8 @@
         <div id="confetti-container" class="confetti-container"></div>
 
         <section id="welcome-screen" class="active">
-            <h1 class="app-title text-2xl sm:text-3xl font-bold mb-8 drop-shadow-lg">VÒNG QUAY KỲ DIệu</h1>
+            <h1 class="app-title text-2xl sm:text-3xl font-bold mb-2 drop-shadow-lg">VÒNG QUAY KỲ DIỆU</h1>
+            <p class="copyright-info text-sm text-gray-600 mb-8">© Lớp học 0 đồng Trung Bình A3, Thạc Gián - Thanh Khê - Đà Nẵng</p>
             <p class="text-xl text-gray-700 mb-10">Chào mừng bạn đến với trò chơi giải đố thú vị!</p>
             <div class="flex flex-col sm:flex-row gap-6">
                 <button id="toggle-instructions-button" class="game-button bg-purple-500 hover:bg-purple-600">
@@ -30,13 +31,23 @@
         <section id="instructions-screen">
             <h2 class="text-3xl font-bold text-indigo-600 mb-6">Hướng Dẫn Chơi</h2>
             <div class="text-left text-gray-700 space-y-4 mb-8 max-w-lg">
-                <p>1. Nhấn nút "Quay" để vòng quay chọn ngẫu nhiên câu hỏi và số điểm thưởng.</p>
-                <p>2. Vòng quay dừng lại, một câu hỏi tiếng Anh sẽ hiện ra.</p>
-                <p>3. Dựa vào số điểm bạn nhận được từ vòng quay, hãy đoán từ tiếng Anh đó.</p>
-                <p>4. Nhập từng chữ cái hoặc cả từ vào ô nhập. Nhấn "Nhập" để kiểm tra.</p>
-                <p>5. Nếu đúng, bạn sẽ nhận điểm. Nếu sai, bạn sẽ bị trừ điểm.</p>
-                <p>6. Bạn có thể nhấn "Mua chữ" (trừ 500 điểm) để tiết lộ một chữ cái.</p>
-                <p class="font-semibold text-lg text-red-600">Lưu ý: Điểm có thể là số âm!</p>
+                <p class="instruction-item"><i class="fas fa-lightbulb icon-blue"></i> 1. Nhấn nút **"Quay"** để vòng quay chọn ngẫu nhiên một câu hỏi và số điểm thưởng.</p>
+                <p class="instruction-item"><i class="fas fa-question-circle icon-green"></i> 2. Khi vòng quay dừng lại, một câu hỏi tiếng Anh sẽ hiện ra.</p>
+                <p class="instruction-item"><i class="fas fa-brain icon-orange"></i> 3. Dựa vào số điểm bạn quay được, hãy đoán từ tiếng Anh tương ứng với câu hỏi.</p>
+                <p class="instruction-item"><i class="fas fa-keyboard icon-purple"></i> 4. **Nhập từng chữ cái hoặc cả từ** vào ô nhập và nhấn **"Nhập"** để kiểm tra.</p>
+                <ul class="list-disc list-inside ml-8 space-y-1">
+                    <li class="instruction-sub-item"><i class="fas fa-check-circle icon-success"></i> Nếu đoán đúng chữ cái, bạn sẽ nhận được điểm tương ứng với ô quay.</li>
+                    <li class="instruction-sub-item"><i class="fas fa-star icon-yellow"></i> Nếu đoán đúng cả từ, bạn sẽ nhận được điểm thưởng lớn hơn.</li>
+                    <li class="instruction-sub-item"><i class="fas fa-times-circle icon-error"></i> Nếu đoán sai, bạn sẽ bị trừ 300 điểm.</li>
+                </ul>
+                <p class="instruction-item"><i class="fas fa-trophy icon-gold"></i> 5. **Quy tắc đặc biệt từ vòng quay:**</p>
+                <ul class="list-disc list-inside ml-8 space-y-1">
+                    <li class="instruction-sub-item"><i class="fas fa-coins icon-double"></i> **"Nhân Đôi"**: Nếu đoán đúng từ, tổng điểm hiện tại của bạn sẽ được nhân đôi.</li>
+                    <li class="instruction-sub-item"><i class="fas fa-dice icon-lucky"></i> **"May Mắn"**: Bạn sẽ được cộng ngay 300 điểm và một chữ cái ngẫu nhiên trong từ sẽ được tiết lộ miễn phí.</li>
+                </ul>
+                <p class="instruction-item"><i class="fas fa-magic icon-reveal"></i> 6. **Chức năng "Mua chữ"**: Bạn có thể nhấn **"Mua chữ"** để tiết lộ một chữ cái bất kỳ trong từ (sẽ trừ 500 điểm).</p>
+                <p class="instruction-item"><i class="fas fa-award icon-finish"></i> 7. Hoàn thành từ bằng cách đoán đúng tất cả các chữ cái.</p>
+                <p class="font-semibold text-lg text-red-600 instruction-item"><i class="fas fa-exclamation-triangle icon-warning"></i> Lưu ý: Điểm của bạn có thể là số âm!</p>
             </div>
             <button id="back-to-welcome-button" class="game-button bg-red-500 hover:bg-red-600">
                 <i class="fas fa-arrow-left"></i> <span>Quay lại</span>
@@ -75,6 +86,7 @@
             <button id="exit-game-button" class="game-button bg-red-600 hover:bg-red-700 mt-8">
                 <i class="fas fa-door-open"></i> <span>Thoát trò chơi</span>
             </button>
+             <p class="copyright-info-bottom text-xs text-gray-500 mt-4">© Lớp học 0 đồng Trung Bình A3, Thạc Gián - Thanh Khê - Đà Nẵng</p>
         </section>
     </div>
 
@@ -143,7 +155,7 @@
         const startGameButton = document.getElementById('start-game-button');
         const backToWelcomeButton = document.getElementById('back-to-welcome-button');
         const toggleMusicButton = document.getElementById('toggle-music-button');
-        const exitGameButton = document.getElementById('exit-game-button'); // Thêm dòng này
+        const exitGameButton = document.getElementById('exit-game-button'); 
 
         const playerScoreDisplay = document.getElementById('player-score');
         const wheelElement = document.getElementById('wheel');
@@ -264,7 +276,7 @@
                 segmentDiv.style.backgroundColor = seg.color;
                 // Rotate segment and then unskew for content
                 segmentDiv.style.transform = `rotate(${index * segmentAngle}deg) skewY(${90 - segmentAngle}deg)`;
-                segmentDiv.style.transformOrigin = `0% 100%`; // Pivot from the center of the wheel
+                segmentDiv.style.transformOrigin = `0% 100%`; // Pivot from the bottom-left corner of the segment (center of the wheel)
 
                 const segmentText = document.createElement('span');
                 segmentText.className = 'segment-text';
@@ -778,7 +790,7 @@
         spinButton.addEventListener('click', spinWheel);
         submitGuessButton.addEventListener('click', handleGuess);
         buyLetterButton.addEventListener('click', buyLetter);
-        exitGameButton.addEventListener('click', exitGame); // Thêm dòng này
+        exitGameButton.addEventListener('click', exitGame); 
 
         // Allow pressing Enter key for guessing
         wordGuessInput.addEventListener('keypress', (e) => {
