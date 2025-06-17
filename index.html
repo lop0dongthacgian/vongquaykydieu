@@ -583,11 +583,14 @@
                     console.log("Calling resetGameRound after word completion.");
                     resetGameRound();
                 }, 7500); // Changed total delay to 7500ms (3.5s after tb9 starts)
-            } else {
-                // If word is NOT completed, disable guess input and enable spin button for next turn
-                canGuess = false; // Disable guess input/submit
-                updateButtonStates(); // Re-enable spin button
-            }
+            
+                } else {
+                    // Nếu từ chưa hoàn thành → cuộn về lại vòng quay
+                    canGuess = false; // Disable guess input
+                    updateButtonStates(); // Enable spin
+                    spinButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
         }
 
         /**
