@@ -1,0 +1,495 @@
+/* General body and container styles */
+body {
+    font-family: 'Inter', sans-serif;
+    /* Updated background gradient for a fresh, colorful look */
+    background-image: linear-gradient(to right top, #ff9a9e, #fad0c4, #fad0c4, #ffb3ba, #c4a9eb, #a2d2ff);
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    background-attachment: fixed; /* Keep background fixed when scrolling */
+}
+
+.container {
+    max-width: 960px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    text-align: center;
+    box-sizing: border-box; /* Include padding in element's total width and height */
+    position: relative; /* Needed for absolute positioned children like notifications */
+    border: 5px solid #8e44ad; /* Thêm viền màu tím nổi bật */
+}
+
+/* Section management */
+section {
+    display: none;
+    flex-direction: column; /* Ensure content stacks vertically */
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh; /* Make sections take up more space vertically */
+    padding: 1rem;
+}
+
+section.active {
+    display: flex;
+}
+
+/* --- App Title Styling --- */
+/* Đã điều chỉnh kích thước font và shadow cho app-title */
+.app-title {
+    color: #ff6f61; /* Màu cam-đỏ tươi sáng */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3), 
+                 -1px -1px 2px rgba(255, 255, 255, 0.5); /* Bóng đổ vừa phải */
+    letter-spacing: 2px; /* Khoảng cách giữa các chữ */
+    font-size: 2.5rem; /* Kích thước font cụ thể cho tiêu đề chính */
+    animation: bounceIn 1s ease-out; /* Thêm hiệu ứng động khi xuất hiện */
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); opacity: 1; }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+
+/* --- Buttons --- */
+.game-button {
+    padding: 0.8rem 2rem;
+    border-radius: 9999px; /* Pill shape */
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none; /* Remove default button border */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.1rem; /* slightly larger font for buttons */
+}
+
+.game-button:hover {
+    transform: translateY(-3px) scale(1.02); /* Thêm hiệu ứng nhún nhẹ khi hover */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Bóng đổ rõ hơn */
+}
+
+.game-button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #cccccc !important; /* Grey out when disabled */
+    transform: none;
+    box-shadow: none;
+}
+
+/* Specific button colors (Tailwind classes handle this in HTML) */
+
+/* Music Toggle Button */
+.music-toggle-button {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 1000;
+    padding: 0.6rem 1.2rem; /* Smaller padding */
+    font-size: 0.9rem; /* Smaller font */
+    background-color: #3498db; /* Blue for music button */
+    border: 2px solid #2980b9;
+}
+
+.music-toggle-button:hover {
+    background-color: #2980b9;
+}
+
+/* --- Wheel Section --- */
+.wheel-container {
+    position: relative;
+    width: 280px; /* Adjusted for a slightly smaller wheel */
+    height: 280px; /* Adjusted for a slightly smaller wheel */
+    margin: 2rem auto;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4), 0 0 25px rgba(0, 0, 0, 0.3); /* Bóng đổ mạnh hơn */
+    border: 8px solid #f8d4e4; /* Pink border */
+    background-color: #fce4ec; /* Light background behind segments */
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 50%;
+    transform: rotate(0deg);
+    /* Transition set by JS for dynamic spinning */
+}
+
+.segment {
+    position: absolute;
+    width: 50%; /* Half of the wheel's width */
+    height: 50%; /* Half of the wheel's height */
+    top: 0;
+    left: 50%;
+    transform-origin: 0% 100%; /* Pivot from the bottom-left corner of the segment (center of the wheel) */
+    overflow: hidden;
+    /* Background color set by JS */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Viền mỏng giữa các segment */
+}
+
+.segment-text {
+    position: absolute;
+    color: #333; /* Darker text for readability on light segments */
+    font-weight: bold;
+    font-size: 0.9em; /* Slightly smaller font for text */
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); /* Bóng đổ cho chữ trên segment */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.pointer {
+    position: absolute;
+    top: -15px; /* Position above the wheel */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid #e74c3c; /* Red color for pointer */
+    z-index: 10;
+}
+
+.spin-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background-color: #f39c12; /* Màu cam rực rỡ */
+    color: white;
+    border-radius: 50%;
+    border: 5px solid #e67e22;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s, transform 0.2s;
+    z-index: 10; /* Ensure it's above segments */
+    display: flex; /* Cho phép icon và text nằm ngang hàng */
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Khoảng cách giữa icon và text */
+}
+
+.spin-button:hover {
+    background-color: #e67e22;
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.spin-button:active {
+    transform: translate(-50%, -50%) scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.spin-button.disabled {
+    background-color: #cccccc;
+    border-color: #999999;
+    cursor: not-allowed;
+    transform: translate(-50%, -50%);
+    box-shadow: none;
+}
+
+
+/* --- Question Display --- */
+.question-box {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    min-height: 80px; /* Ensures a consistent height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+    background-color: #ecf0f1; /* Light grey background */
+    border: 3px dashed #8e44ad; /* Viền nét đứt màu tím */
+    color: #4a148c; /* Chữ màu tím đậm */
+}
+
+.question-box.flashing {
+    animation: flashBorder 1.5s infinite alternate;
+}
+
+@keyframes flashBorder {
+    0% { border-color: #8e44ad; }
+    100% { border-color: #e74c3c; /* Red flash */ }
+}
+
+/* --- Word Input Area --- */
+.word-input-area {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem; /* Space between input, buttons, and word display */
+}
+
+.word-guess-input {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    border: 2px solid #ccc;
+    border-radius: 0.75rem;
+    font-size: 1.2rem;
+    text-align: center;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #ffffff;
+    color: #333;
+}
+
+.word-guess-input:focus {
+    outline: none;
+    border-color: #8e44ad;
+    box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.2);
+}
+
+.word-guess-input:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+.word-display-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem; /* Space between letter boxes */
+    padding: 1rem;
+    background-color: #ffebee; /* Light pink background for word display */
+    border-radius: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ffccbc; /* Light orange border */
+}
+
+.word-letter-box {
+    width: 45px; /* Fixed width for each letter box, slightly larger */
+    height: 55px; /* Fixed height */
+    perspective: 1000px; /* For 3D flip effect */
+    position: relative;
+    cursor: default;
+    background-color: #c0d9ec; /* Light blue for unrevealed */
+    border: 2px solid #8ecae6; /* Blue border */
+    border-radius: 0; /* Bo tròn góc hơn - Đã đổi thành 0 (vuông góc) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem; /* Larger font for letters */
+    font-weight: bold;
+    color: #2196f3; /* Blue text */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Bóng đổ rõ hơn */
+    transition: all 0.3s ease;
+    overflow: hidden; /* Hide overflow during flip */
+    text-transform: uppercase; /* Đảm bảo chữ luôn viết hoa */
+}
+
+.word-space-box {
+    width: 20px; /* Smaller width for spaces */
+    height: 55px;
+    /* No background or border, just for spacing */
+}
+
+/* 3D Flip effect for revealed letters */
+.word-letter-box .front,
+.word-letter-box .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0; /* Bo tròn góc hơn - Đã đổi thành 0 (vuông góc) */
+}
+
+.word-letter-box .front {
+    background-color: #c0d9ec; /* Light blue for front */
+    color: #2196f3; /* Blue for front text */
+    transform: rotateY(0deg);
+    z-index: 2;
+}
+
+.word-letter-box .back {
+    background-color: #8bc34a; /* Green for revealed (back) */
+    color: white;
+    transform: rotateY(180deg); /* Start flipped */
+    z-index: 1;
+}
+
+.word-letter-box.revealed .front {
+    transform: rotateY(-180deg);
+}
+
+.word-letter-box.revealed .back {
+    transform: rotateY(0deg);
+}
+
+.word-letter-box .front,
+.word-letter-box .back {
+    transition: transform 1s cubic-bezier(0.4, 0.0, 0.2, 1); /* Hiệu ứng lật chậm lại (1s) */
+}
+
+
+/* --- Notifications --- */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.notification-message {
+    background-color: #333;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: slideInFadeOut 3s forwards;
+    width: fit-content; /* Adjust width to content */
+    opacity: 0; /* Start hidden for animation */
+    transform: translateY(-30px); /* Start above */
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.notification-message.success {
+    background-color: #4CAF50; /* Green */
+}
+
+.notification-message.error {
+    background-color: #f44336; /* Red */
+}
+
+.notification-message.info {
+    background-color: #2196F3; /* Blue */
+}
+
+@keyframes slideInFadeOut {
+    0% { opacity: 0; transform: translateY(-30px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-30px); display: none; } /* Add display: none to completely remove */
+}
+
+/* Confetti effect */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    /* background-color set by JS based on random colors */
+    opacity: 0;
+    animation: fall 3s ease-out forwards;
+    border-radius: 50%;
+    transform-origin: center;
+}
+
+@keyframes fall {
+    0% {
+        transform: translate(var(--x, 0), var(--y, 0)) rotateZ(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--x-end, 0), var(--y-end, 0)) rotateZ(720deg) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .container {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .app-title {
+        font-size: 2rem; /* Nhỏ hơn nữa trên mobile */
+        letter-spacing: 1px;
+    }
+
+    .game-button {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .wheel-container {
+        width: 250px;
+        height: 250px;
+    }
+
+    .spin-button {
+        width: 70px;
+        height: 70px;
+        font-size: 1rem;
+    }
+
+    .question-box {
+        font-size: 1.2rem;
+        padding: 1rem;
+    }
+
+    .word-guess-input {
+        font-size: 1rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .word-letter-box {
+        width: 38px; /* Adjusted for smaller screens */
+        height: 48px; /* Adjusted for smaller screens */
+        font-size: 1.6rem;
+    }
+    .word-space-box {
+        width: 15px;
+        height: 48px;
+    }
+
+    .music-toggle-button {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    #notification-container {
+        top: 10px;
+        max-width: 90%;
+    }
+}
