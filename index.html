@@ -15,7 +15,7 @@
         <div id="confetti-container" class="confetti-container"></div>
 
         <section id="welcome-screen" class="active">
-            <h1 class="app-title text-3xl sm:text-4xl font-bold mb-8 drop-shadow-lg">VÒNG QUAY KỲ DIỆU</h1>
+            <h1 class="app-title text-2xl sm:text-3xl font-bold mb-8 drop-shadow-lg">VÒNG QUAY KỲ DIệu</h1>
             <p class="text-xl text-gray-700 mb-10">Chào mừng bạn đến với trò chơi giải đố thú vị!</p>
             <div class="flex flex-col sm:flex-row gap-6">
                 <button id="toggle-instructions-button" class="game-button bg-purple-500 hover:bg-purple-600">
@@ -44,7 +44,7 @@
         </section>
 
         <section id="game-screen">
-            <h1 class="text-2xl sm:text-4xl font-bold text-indigo-700 mb-4">VÒNG QUAY KỲ DIỆU</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold text-indigo-700 mb-4">VÒNG QUAY KỲ DIỆU</h1>
             <p class="text-2xl font-semibold text-green-700 mb-6">Điểm của bạn: <span id="player-score">0</span></p>
 
             <div class="wheel-container">
@@ -71,6 +71,10 @@
                 <div class="word-display-container flex flex-wrap justify-center gap-2 mt-4" id="word-display-container">
                     </div>
             </div>
+
+            <button id="exit-game-button" class="game-button bg-red-600 hover:bg-red-700 mt-8">
+                <i class="fas fa-door-open"></i> <span>Thoát trò chơi</span>
+            </button>
         </section>
     </div>
 
@@ -139,6 +143,7 @@
         const startGameButton = document.getElementById('start-game-button');
         const backToWelcomeButton = document.getElementById('back-to-welcome-button');
         const toggleMusicButton = document.getElementById('toggle-music-button');
+        const exitGameButton = document.getElementById('exit-game-button'); // Thêm dòng này
 
         const playerScoreDisplay = document.getElementById('player-score');
         const wheelElement = document.getElementById('wheel');
@@ -675,11 +680,9 @@
             revealedLetters = [];
             currentSegmentValue = 0;
 
-            // Remove 'active' from all sections
+            // Ensure only gameScreen is active or set to welcomeScreen
             welcomeScreen.classList.remove('active');
             instructionsScreen.classList.remove('active');
-            
-            // Add 'active' to gameScreen
             gameScreen.classList.add('active'); 
             console.log("gameScreen should be active now.");
 
@@ -696,6 +699,37 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             showNotification(`Để chọn từ mới, mời bạn nhấn nút "Quay"`, 'info', 4000, 'notification7');
+        }
+
+        /**
+         * Resets the entire game to its initial state, returning to the welcome screen.
+         */
+        function exitGame() {
+            console.log("Exit Game clicked.");
+            playerScore = 0; // Reset score
+            currentQuestion = null;
+            revealedLetters = [];
+            isSpinning = false;
+            canGuess = false;
+            currentSegmentValue = 0;
+
+            playerScoreDisplay.textContent = '0';
+            questionDisplay.textContent = "Mời bạn quay để chọn câu hỏi và số điểm";
+            questionDisplay.classList.add('flashing');
+            wordGuessInput.value = '';
+            wordDisplayContainer.innerHTML = '';
+            
+            // Hide game screen and show welcome screen
+            gameScreen.classList.remove('active');
+            instructionsScreen.classList.remove('active');
+            welcomeScreen.classList.add('active');
+
+            // Stop music if it's playing
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0; // Rewind music
+
+            updateButtonStates(); // Ensure buttons are in correct state
+            showNotification('Bạn đã thoát trò chơi.', 'info', 3000, null); // Notification without sound
         }
 
 
@@ -744,6 +778,7 @@
         spinButton.addEventListener('click', spinWheel);
         submitGuessButton.addEventListener('click', handleGuess);
         buyLetterButton.addEventListener('click', buyLetter);
+        exitGameButton.addEventListener('click', exitGame); // Thêm dòng này
 
         // Allow pressing Enter key for guessing
         wordGuessInput.addEventListener('keypress', (e) => {
