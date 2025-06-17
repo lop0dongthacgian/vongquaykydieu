@@ -28,31 +28,42 @@
             </div>
         </section>
 
-        <section id="instructions-screen">
-            <h2 class="text-3xl font-bold text-indigo-600 mb-6">Hướng Dẫn Chơi</h2>
-            <div class="text-left text-gray-700 space-y-4 mb-8 max-w-lg">
-                <p class="instruction-item"><i class="fas fa-lightbulb icon-blue"></i> 1. Nhấn nút "Quay" để vòng quay chọn ngẫu nhiên một câu hỏi và số điểm thưởng.</p>
-                <p class="instruction-item"><i class="fas fa-question-circle icon-green"></i> 2. Khi vòng quay dừng lại, một câu hỏi tiếng Anh sẽ hiện ra.</p>
-                <p class="instruction-item"><i class="fas fa-brain icon-orange"></i> 3. Dựa vào số điểm bạn quay được, hãy đoán từ tiếng Anh tương ứng với câu hỏi.</p>
-                <p class="instruction-item"><i class="fas fa-keyboard icon-purple"></i> 4. Nhập từng chữ cái hoặc cả từ vào ô nhập và nhấn "Nhập" để kiểm tra.</p>
-                <ul class="list-disc list-inside ml-8 space-y-1">
-                    <li class="instruction-sub-item"><i class="fas fa-check-circle icon-success"></i> Nếu đoán đúng chữ cái, bạn sẽ nhận được điểm tương ứng với ô quay.</li>
-                    <li class="instruction-sub-item"><i class="fas fa-star icon-yellow"></i> Nếu đoán đúng cả từ, bạn sẽ nhận được điểm thưởng lớn hơn.</li>
-                    <li class="instruction-sub-item"><i class="fas fa-times-circle icon-error"></i> Nếu đoán sai, bạn sẽ bị trừ 300 điểm.</li>
-                </ul>
-                <p class="instruction-item"><i class="fas fa-trophy icon-gold"></i> 5. Quy tắc đặc biệt từ vòng quay:</p>
-                <ul class="list-disc list-inside ml-8 space-y-1">
-                    <li class="instruction-sub-item"><i class="fas fa-coins icon-double"></i> "Nhân Đôi": Nếu đoán đúng từ, tổng điểm hiện tại của bạn sẽ được nhân đôi.</li>
-                    <li class="instruction-sub-item"><i class="fas fa-dice icon-lucky"></i> "May Mắn": Bạn sẽ được cộng ngay 300 điểm và một chữ cái ngẫu nhiên trong từ sẽ được hiển thị tự động.</li>
-                </ul>
-                <p class="instruction-item"><i class="fas fa-magic icon-reveal"></i> 6. Chức năng "Mua chữ": Bạn có thể nhấn "Mua chữ" để tiết lộ một chữ cái bất kỳ trong từ (sẽ trừ 500 điểm).</p>
-                <p class="instruction-item"><i class="fas fa-award icon-finish"></i> 7. Hoàn thành từ bằng cách đoán đúng tất cả các chữ cái.</p>
-                <p class="font-semibold text-lg text-red-600 instruction-item"><i class="fas fa-exclamation-triangle icon-warning"></i> Lưu ý: Điểm của bạn có thể là số âm!</p>
-            </div>
-            <button id="back-to-welcome-button" class="game-button bg-red-500 hover:bg-red-600">
-                <i class="fas fa-arrow-left"></i> <span>Quay lại</span>
-            </button>
-        </section>
+        
+<section id="instructions-screen" class="text-center py-10 px-4 bg-blue-50">
+  <h2 class="text-4xl font-extrabold text-indigo-700 mb-6">
+    <i class="fas fa-info-circle text-indigo-500 mr-2"></i> Hướng Dẫn
+  </h2>
+
+  <div class="mx-auto text-left space-y-5 max-w-2xl bg-white p-6 rounded-xl shadow-lg">
+    <p class="text-blue-800"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> <strong>Bước 1:</strong> Nhấn nút <b>"Quay"</b> để bắt đầu chọn ngẫu nhiên một câu hỏi và số điểm.</p>
+
+    <p class="text-indigo-800"><i class="fas fa-question-circle text-blue-500 mr-2"></i> <strong>Bước 2:</strong> Một câu hỏi tiếng Anh sẽ xuất hiện sau khi vòng quay dừng lại.</p>
+
+    <p class="text-purple-800"><i class="fas fa-brain text-purple-500 mr-2"></i> <strong>Bước 3:</strong> Dựa vào số điểm, hãy đoán từ tiếng Anh tương ứng với câu hỏi.</p>
+
+    <p class="text-green-800"><i class="fas fa-keyboard text-green-500 mr-2"></i> <strong>Bước 4:</strong> Nhập từng chữ cái vào ô nhập, sau đó nhấn <b>"Nhập"</b>.</p>
+
+    <ul class="list-disc list-inside ml-6 space-y-1 text-sm text-gray-700">
+      <li><i class="fas fa-check-circle text-green-600 mr-2"></i> Đoán đúng chữ cái: nhận điểm theo ô quay.</li>
+      <li><i class="fas fa-times-circle text-red-500 mr-2"></i> Đoán sai: bị trừ 300 điểm.</li>
+    </ul>
+    <p class="text-yellow-800"><i class="fas fa-trophy text-yellow-600 mr-2"></i> <strong>Bước 5:</strong> Quy tắc đặc biệt từ vòng quay:</p>
+    <ul class="list-disc list-inside ml-6 space-y-1 text-sm text-gray-700">
+      <li><i class="fas fa-coins text-orange-500 mr-2"></i> <b>“Nhân Đôi”</b>: Đoán đúng từ → điểm nhân đôi.</li>
+      <li><i class="fas fa-dice text-pink-500 mr-2"></i> <b>“May Mắn”</b>: +300 điểm và mở ngẫu nhiên 1 chữ cái.</li>
+    </ul>
+    <p class="text-indigo-800"><i class="fas fa-magic text-indigo-400 mr-2"></i> <strong>Bước 6:</strong> Nhấn <b>"Mua chữ"</b> để mở 1 chữ cái bất kỳ (trừ 500 điểm).</p>
+    <p class="text-yellow-800"><i class="fas fa-award text-yellow-600 mr-2"></i> <strong>Bước 7:</strong> Đoán đúng toàn bộ chữ cái để hoàn thành từ.</p>
+    <p class="text-red-600 font-semibold text-base mt-4"><i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> Lưu ý: Bạn có thể bị điểm âm!</p>
+  </div>
+
+  <div class="mt-8">
+    <button id="back-to-welcome-button" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300">
+      <i class="fas fa-arrow-left mr-2"></i> Quay lại
+    </button>
+  </div>
+</section>
+
 
         <section id="game-screen">
             <h1 class="text-2xl sm:text-3xl font-bold text-indigo-700 mb-4">VÒNG QUAY KỲ DIỆU</h1>
