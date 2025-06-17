@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vòng Quay Kỳ Diệu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="selection:bg-pink-300 selection:text-pink-900">
+    <div class="container">
+        <div id="notification-container"></div>
+        <div id="confetti-container" class="confetti-container"></div>
+
+        <section id="welcome-screen" class="active">
+            <h1 class="app-title text-3xl sm:text-4xl font-bold mb-8 drop-shadow-lg">VÒNG QUAY KỲ DIỆU</h1>
+            <p class="text-xl text-gray-700 mb-10">Chào mừng bạn đến với trò chơi giải đố thú vị!</p>
+            <div class="flex flex-col sm:flex-row gap-6">
+                <button id="toggle-instructions-button" class="game-button bg-purple-500 hover:bg-purple-600">
+                    <i class="fas fa-book-open"></i> <span>Mở/Tắt hướng dẫn</span>
+                </button>
+                <button id="start-game-button" class="game-button bg-green-500 hover:bg-green-600">
+                    <i class="fas fa-play"></i> <span>Vào trò chơi</span>
+                </button>
+            </div>
+        </section>
+
+        <section id="instructions-screen">
+            <h2 class="text-3xl font-bold text-indigo-600 mb-6">Hướng Dẫn Chơi</h2>
+            <div class="text-left text-gray-700 space-y-4 mb-8 max-w-lg">
+                <p>1. Nhấn nút "Quay" để vòng quay chọn ngẫu nhiên câu hỏi và số điểm thưởng.</p>
+                <p>2. Vòng quay dừng lại, một câu hỏi tiếng Anh sẽ hiện ra.</p>
+                <p>3. Dựa vào số điểm bạn nhận được từ vòng quay, hãy đoán từ tiếng Anh đó.</p>
+                <p>4. Nhập từng chữ cái hoặc cả từ vào ô nhập. Nhấn "Nhập" để kiểm tra.</p>
+                <p>5. Nếu đúng, bạn sẽ nhận điểm. Nếu sai, bạn sẽ bị trừ điểm.</p>
+                <p>6. Bạn có thể nhấn "Mua chữ" (trừ 500 điểm) để tiết lộ một chữ cái.</p>
+                <p class="font-semibold text-lg text-red-600">Lưu ý: Điểm có thể là số âm!</p>
+            </div>
+            <button id="back-to-welcome-button" class="game-button bg-red-500 hover:bg-red-600">
+                <i class="fas fa-arrow-left"></i> <span>Quay lại</span>
+            </button>
+        </section>
+
+        <section id="game-screen">
+            <h1 class="text-2xl sm:text-4xl font-bold text-indigo-700 mb-4">VÒNG QUAY KỲ DIỆU</h1>
+            <p class="text-2xl font-semibold text-green-700 mb-6">Điểm của bạn: <span id="player-score">0</span></p>
+
+            <div class="wheel-container">
+                <div class="wheel" id="wheel">
+                    </div>
+                <div class="pointer"></div>
+                <button class="spin-button" id="spin-button"><i class="fas fa-spinner"></i> Quay</button>
+            </div>
+
+            <div class="question-box flashing" id="question-display">
+                Mời bạn quay để chọn câu hỏi và số điểm
+            </div>
+
+            <div class="word-input-area" id="word-input-area">
+                <input type="text" id="word-guess-input" class="word-guess-input" placeholder="Nhập chữ hoặc từ của bạn" maxlength="20" disabled>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button id="submit-guess-button" class="game-button bg-blue-500 hover:bg-blue-600" disabled>
+                        <i class="fas fa-check"></i> <span>Nhập</span>
+                    </button>
+                    <button id="buy-letter-button" class="game-button bg-yellow-500 hover:bg-yellow-600" disabled>
+                        <i class="fas fa-lightbulb"></i> <span>Mua chữ (500 điểm)</span>
+                    </button>
+                </div>
+                <div class="word-display-container flex flex-wrap justify-center gap-2 mt-4" id="word-display-container">
+                    </div>
+            </div>
+        </section>
+    </div>
+
+    <button id="toggle-music-button" class="game-button music-toggle-button bg-gray-500 hover:bg-gray-600">
+        <span><i class="fas fa-music"></i> Nhạc</span>
+    </button>
+
+    <script src="questions.js"></script>
+    <script>
+        // Game data
+        // Questions will be loaded from questions.js
+        const questions = allQuestions; // Assuming allQuestions is defined in questions.js
+
+        // Wheel segments configuration - Restored original colors
+        const segments = [
+            { value: 200, text: '200 Điểm', color: '#ffb3ba' }, // Light Pink
+            { value: 'double', text: 'Nhân Đôi', color: '#ffdfba' }, // Light Orange
+            { value: 400, text: '400 Điểm', color: '#ffffba' }, // Light Yellow
+            { value: 'lucky', text: 'May Mắn', color: '#baffc9' }, // Light Green
+            { value: 600, text: '600 Điểm', color: '#bae1ff' }, // Light Blue
+            { value: 800, text: '800 Điểm', color: '#e0baff' }  // Light Purple
+        ];
+        // Add more segments to make it 12, repeating the values and colors.
+        segments.push(
+            { value: 200, text: '200 Điểm', color: '#ffb3ba' },
+            { value: 'double', text: 'Nhân Đôi', color: '#ffdfba' },
+            { value: 400, text: '400 Điểm', color: '#ffffba' },
+            { value: 'lucky', text: 'May Mắn', color: '#baffc9' },
+            { value: 600, text: '600 Điểm', color: '#bae1ff' },
+            { value: 800, text: '800 Điểm', color: '#e0baff' }
+        );
+
+
+        // Game state variables
+        let playerScore = 0;
+        let currentQuestion = null;
+        let revealedLetters = [];
+        let isSpinning = false;
+        let canGuess = false;
+        let currentSegmentValue = 0; // Stores the points/type awarded by the wheel
+
+        // Audio elements - Assuming these paths are correct for local files
+        const backgroundMusic = new Audio('audio/nhacnen.mp3');
+        backgroundMusic.loop = true;
+        backgroundMusic.volume = 0.3;
+
+        // Sound effects - Loaded specific notification sounds
+        const soundEffects = {
+            notification1: new Audio('audio/tb1.wav'),
+            notification2: new Audio('audio/tb2.wav'),
+            notification3: new Audio('audio/tb3.wav'), // Used for "May Mắn"
+            notification4: new Audio('audio/tb4.wav'), // Used for correct letter guess
+            notification5: new Audio('audio/tb5.wav'), // Used for wrong guess
+            notification6: new Audio('audio/tb6.wav'), // Used for "Quay để chơi tiếp"
+            notification7: new Audio('audio/tb7.wav'), // Used for "Để chọn từ mới"
+            notification8: new Audio('audio/tb8.wav'), // NEW: For "Mua chữ"
+            cheer: new Audio('audio/cheer.wav') // For confetti/completion
+        };
+
+        // DOM elements
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const instructionsScreen = document.getElementById('instructions-screen');
+        const gameScreen = document.getElementById('game-screen');
+
+        const toggleInstructionsButton = document.getElementById('toggle-instructions-button');
+        const startGameButton = document.getElementById('start-game-button');
+        const backToWelcomeButton = document.getElementById('back-to-welcome-button');
+        const toggleMusicButton = document.getElementById('toggle-music-button');
+
+        const playerScoreDisplay = document.getElementById('player-score');
+        const wheelElement = document.getElementById('wheel');
+        const spinButton = document.getElementById('spin-button');
+        const questionDisplay = document.getElementById('question-display');
+        const wordGuessInput = document.getElementById('word-guess-input');
+        const submitGuessButton = document.getElementById('submit-guess-button');
+        const buyLetterButton = document.getElementById('buy-letter-button');
+        const wordDisplayContainer = document.getElementById('word-display-container');
+        const notificationContainer = document.getElementById('notification-container');
+        const wordInputArea = document.getElementById('word-input-area'); // Get the word input area
+
+        // --- Utility Functions ---
+
+        /**
+         * Plays a specified sound effect.
+         * @param {string} soundName - The key of the sound effect in the soundEffects object.
+         */
+        function playSound(soundName) {
+            const sound = soundEffects[soundName];
+            if (sound) {
+                sound.currentTime = 0; // Rewind to start if already playing
+                sound.play().catch(e => console.error(`Error playing sound ${soundName}:`, e));
+            }
+        }
+
+        /**
+         * Displays a temporary notification message with specific sound.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', or 'info'.
+         * @param {number} duration - Duration in milliseconds before fading out.
+         * @param {string} soundToPlay - The key of the sound effect to play (e.g., 'notification1', 'cheer'). If null, no sound plays.
+         */
+        function showNotification(message, type = 'info', duration = 3000, soundToPlay = null) {
+            const notificationDiv = document.createElement('div');
+            notificationDiv.className = `notification-message ${type}`;
+            notificationDiv.textContent = message;
+            notificationContainer.appendChild(notificationDiv);
+
+            if (soundToPlay) { // Only play sound if soundToPlay is provided
+                playSound(soundToPlay);
+            } else {
+                // Fallback to random if no specific sound is provided AND it's not a deliberate mute
+                // (This block is kept as is, but for toggleMusicButton, we'll pass null explicitly)
+                const soundKeys = ['notification1', 'notification2', 'notification3', 'notification4', 'notification5'];
+                const randomSound = soundKeys[Math.floor(Math.random() * soundKeys.length)];
+                // playSound(randomSound); // Commented out to prevent default sound if soundToPlay is null
+            }
+
+            setTimeout(() => {
+                notificationDiv.remove();
+            }, duration);
+        }
+
+        /**
+         * Updates the player's score and its display.
+         * @param {number} points - Points to add/subtract.
+         */
+        function updateScore(points) {
+            playerScore += points;
+            playerScoreDisplay.textContent = playerScore;
+            updateButtonStates();
+        }
+
+        /**
+         * Updates the state (enabled/disabled) of action buttons.
+         */
+        function updateButtonStates() {
+            // Buy Letter button
+            if (playerScore < 500) {
+                buyLetterButton.classList.add('disabled');
+                buyLetterButton.disabled = true;
+            } else {
+                buyLetterButton.classList.remove('disabled');
+                buyLetterButton.disabled = false;
+            }
+
+            // Spin button
+            if (isSpinning || canGuess) { // Can't spin if already spinning or if a question is active
+                spinButton.disabled = true;
+                spinButton.classList.add('disabled');
+            } else {
+                spinButton.disabled = false;
+                spinButton.classList.remove('disabled');
+            }
+
+            // Submit guess button and input
+            if (canGuess && currentQuestion) {
+                wordGuessInput.disabled = false;
+                submitGuessButton.disabled = false;
+            } else {
+                wordGuessInput.disabled = true;
+                submitGuessButton.disabled = true;
+            }
+        }
+
+        /**
+         * Chooses a random question from allQuestions.
+         */
+        function getRandomQuestion() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * questions.length);
+            } while (currentQuestion && questions[randomIndex] === currentQuestion); // Avoid immediate repeats
+            return questions[randomIndex];
+        }
+
+        /**
+         * Renders the wheel segments dynamically.
+         */
+        function renderWheel() {
+            wheelElement.innerHTML = ''; // Clear existing segments
+            const segmentAngle = 360 / segments.length;
+
+            segments.forEach((seg, index) => {
+                const segmentDiv = document.createElement('div');
+                segmentDiv.className = 'segment';
+                segmentDiv.style.backgroundColor = seg.color;
+                // Rotate segment and then unskew for content
+                segmentDiv.style.transform = `rotate(${index * segmentAngle}deg) skewY(${90 - segmentAngle}deg)`;
+                segmentDiv.style.transformOrigin = `0% 100%`; // Pivot from the center of the wheel
+
+                const segmentText = document.createElement('span');
+                segmentText.className = 'segment-text';
+                segmentText.textContent = seg.text;
+
+                // Position the text within the segment for better visibility
+                const textDistance = 90; // Distance from the center of the wheel to the text
+                const textRotation = (index * segmentAngle + segmentAngle / 2); // Angle for the center of the segment
+                const xOffset = textDistance * Math.cos((textRotation - 90) * Math.PI / 180);
+                const yOffset = textDistance * Math.sin((textRotation - 90) * Math.PI / 180);
+
+                segmentText.style.left = `calc(50% + ${xOffset}px)`;
+                segmentText.style.top = `calc(50% + ${yOffset}px)`;
+                segmentText.style.transform = `translate(-50%, -50%) rotate(${textRotation}deg)`;
+                segmentText.style.transformOrigin = 'center center';
+
+                segmentDiv.appendChild(segmentText);
+                wheelElement.appendChild(segmentDiv);
+            });
+        }
+
+
+        /**
+         * Starts the wheel spinning animation.
+         */
+        function spinWheel() {
+            if (isSpinning) return;
+
+            // Play background music if not playing (first interaction)
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().catch(e => console.error("Error playing background music:", e));
+            }
+
+            isSpinning = true;
+            canGuess = false;
+            updateButtonStates(); // Disable all interaction buttons
+
+            questionDisplay.textContent = "Mời bạn quay để chọn câu hỏi và số điểm";
+            questionDisplay.classList.add('flashing');
+            wordDisplayContainer.innerHTML = ''; // Clear previous word display
+
+            const randomIndex = Math.floor(Math.random() * segments.length);
+            const segmentAngle = 360 / segments.length;
+            // Spin 8-12 full rotations + land on segment center. Add a random offset within the segment.
+            const minRotations = 8;
+            const maxRotations = 12;
+            const numRotations = Math.floor(Math.random() * (maxRotations - minRotations + 1)) + minRotations;
+            const stopAngle = 360 * numRotations + (360 - (randomIndex * segmentAngle + segmentAngle / 2));
+            const randomOffset = Math.random() * (segmentAngle - 10) - (segmentAngle - 10) / 2; // -10 to keep it away from edges
+            const finalRotation = stopAngle + randomOffset;
+
+            wheelElement.style.transition = 'transform 8s cubic-bezier(0.2, 0.9, 0.3, 1)'; // Longer transition for more rotations
+            wheelElement.style.transform = `rotate(${finalRotation}deg)`;
+
+            currentSegmentValue = segments[randomIndex].value;
+
+            setTimeout(() => {
+                wheelElement.style.transition = 'none'; // Reset transition after spin
+                // Ensure the transform snaps to the actual final angle for precision
+                wheelElement.style.transform = `rotate(${finalRotation % 360}deg)`;
+
+                isSpinning = false;
+                canGuess = true; // Allow guessing after spin
+                questionDisplay.classList.remove('flashing'); // Stop flashing
+
+                handleSpinResult(); // Process the result
+                updateButtonStates(); // Re-enable relevant buttons
+
+                // Scroll to the word input area after the spin finishes
+                wordInputArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            }, 8000); // Must match CSS transition duration
+        }
+
+        /**
+         * Handles the result after the wheel stops.
+         */
+        function handleSpinResult() {
+            currentQuestion = getRandomQuestion();
+            // revealedLetters array initialized based on the plainAnswer, including spaces
+            revealedLetters = currentQuestion.plainAnswer.map(char => char === ' ' ? ' ' : '');
+            renderWordDisplay();
+
+            let message = '';
+            let notificationSound = 'notification1'; // Default sound
+
+            if (typeof currentSegmentValue === 'number') {
+                message = `Hay quá! Tiếp tục nhé! Bạn quay được ${currentSegmentValue} điểm.`; // Removed question
+                notificationSound = 'notification1'; // Âm thanh cho điểm
+            } else if (currentSegmentValue === 'double') {
+                message = `Tuyệt vời! Nhân đôi điểm! Đoán đúng từ sẽ nhân đôi điểm!`; // Removed question
+                notificationSound = 'notification2'; // Âm thanh cho Nhân Đôi
+            } else if (currentSegmentValue === 'lucky') {
+                updateScore(300); // Cộng 300 điểm ngay
+                revealRandomLetter(); // Tự động tiết lộ một chữ cái
+                message = `Một chữ đã mở và ba trăm điểm đã được cộng vào!`; // Removed question
+                notificationSound = 'notification3'; // Âm thanh cho May Mắn
+            }
+            questionDisplay.textContent = currentQuestion.question; // Display the actual question
+            showNotification(message, 'info', 3000, notificationSound);
+        }
+
+        /**
+         * Renders the current state of the word to be guessed, with 3D flip effect.
+         */
+        function renderWordDisplay() {
+            wordDisplayContainer.innerHTML = '';
+            currentQuestion.plainAnswer.forEach((char, index) => {
+                if (char === ' ') {
+                    const spaceBox = document.createElement('div');
+                    spaceBox.className = 'word-space-box';
+                    wordDisplayContainer.appendChild(spaceBox);
+                } else {
+                    const letterBox = document.createElement('div');
+                    letterBox.className = 'word-letter-box';
+                    letterBox.dataset.index = index; // Store index for easier access
+
+                    const frontFace = document.createElement('div');
+                    frontFace.className = 'front';
+                    frontFace.textContent = '_'; // Always show underscore on front initially
+
+                    const backFace = document.createElement('div');
+                    backFace.className = 'back';
+                    backFace.textContent = char; // Actual letter on back face
+
+                    letterBox.appendChild(frontFace);
+                    letterBox.appendChild(backFace);
+
+                    if (revealedLetters[index] !== '') {
+                        letterBox.classList.add('revealed'); // Add class if already revealed
+                    }
+                    wordDisplayContainer.appendChild(letterBox);
+                }
+            });
+        }
+
+        /**
+         * Handles the player's guess (letter or full word).
+         */
+        function handleGuess() {
+            if (!canGuess || !currentQuestion) return;
+
+            const guess = wordGuessInput.value.trim().toUpperCase();
+            if (guess === '') {
+                showNotification('Vui lòng nhập chữ hoặc từ!', 'info', 3000, 'notification1');
+                return;
+            }
+
+            const plainAnswerString = currentQuestion.plainAnswer.filter(char => char !== ' ').join('').toUpperCase();
+            const guessStripped = guess.replace(/ /g, '');
+
+            let pointsChange = 0;
+            let correctGuessMade = false;
+            let notificationMessage = ''; // Variable to store notification message
+
+            if (guess.length === 1) { // Single letter guess
+                let lettersFoundThisTurn = 0;
+                for (let i = 0; i < currentQuestion.plainAnswer.length; i++) {
+                    if (currentQuestion.plainAnswer[i].toUpperCase() === guess && revealedLetters[i] === '') {
+                        revealedLetters[i] = guess;
+                        const letterBox = wordDisplayContainer.querySelector(`.word-letter-box[data-index="${i}"]`);
+                        if (letterBox) {
+                            letterBox.classList.add('revealed');
+                        }
+                        lettersFoundThisTurn++;
+                    }
+                }
+
+                if (lettersFoundThisTurn > 0) {
+                    if (currentSegmentValue === 'double') {
+                        notificationMessage = `Chính xác, bạn đã đoán đúng rồi, tiếp tục đoán để nhân đôi điểm!`;
+                    } else {
+                        // Calculate points based on segment value or a default for 'lucky'
+                        if (typeof currentSegmentValue === 'number') {
+                            pointsChange = currentSegmentValue * lettersFoundThisTurn;
+                        } else if (currentSegmentValue === 'lucky') {
+                            pointsChange = 100 * lettersFoundThisTurn; // Small bonus per letter for 'lucky' segment
+                        } else {
+                            pointsChange = 200 * lettersFoundThisTurn; // Fallback default if new segments are added later
+                        }
+                        updateScore(pointsChange);
+                        notificationMessage = `Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng! (+${pointsChange} điểm)`; // Display actual points
+                    }
+                    showNotification(notificationMessage, 'success', 3000, 'notification4');
+                    correctGuessMade = true;
+                } else {
+                    pointsChange = -300;
+                    updateScore(pointsChange);
+                    showNotification(`Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!`, 'error', 3000, 'notification5');
+                }
+            } else { // Full word guess
+                if (guessStripped === plainAnswerString) {
+                    if (currentSegmentValue === 'double') {
+                        pointsChange = playerScore; // Doubles current score
+                        updateScore(pointsChange);
+                        notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ từ! Điểm của bạn được nhân đôi!`;
+                        showNotification(notificationMessage, 'success', 3000, 'cheer'); // Use cheer for big win
+                    } else if (typeof currentSegmentValue === 'number' || currentSegmentValue === 'lucky') {
+                        let unrevealedCount = 0;
+                        for (let i = 0; i < currentQuestion.plainAnswer.length; i++) {
+                            if (currentQuestion.plainAnswer[i] !== ' ' && revealedLetters[i] === '') {
+                                unrevealedCount++;
+                            }
+                        }
+                        // If there are unrevealed letters, give points based on segment value or a base.
+                        if (typeof currentSegmentValue === 'number') {
+                            pointsChange = currentSegmentValue * unrevealedCount;
+                        } else if (currentSegmentValue === 'lucky') {
+                            pointsChange = 100 * unrevealedCount; // Consistent with letter guess for lucky
+                        } else {
+                             pointsChange = 200 * unrevealedCount; // Fallback
+                        }
+
+                        if (unrevealedCount === 0 && pointsChange === 0) { // All letters were already revealed, still a correct full word guess
+                            pointsChange = 300; // Small bonus for correct full guess even if all revealed
+                        }
+                        updateScore(pointsChange);
+                        notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ từ! Đã được cộng ${pointsChange} điểm!`;
+                        showNotification(notificationMessage, 'success', 3000, 'cheer');
+                    } else { // Fallback for other special segments if needed
+                        pointsChange = 300; // Default bonus for full word guess
+                        updateScore(pointsChange);
+                        notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ từ! Đã được cộng ${pointsChange} điểm!`;
+                        showNotification(notificationMessage, 'success', 3000, 'cheer');
+                    }
+                    revealAllLetters(); // Reveal all letters with flip effect
+                    correctGuessMade = true;
+                } else {
+                    pointsChange = -300;
+                    updateScore(pointsChange);
+                    showNotification(`Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!`, 'error', 3000, 'notification5');
+                }
+            }
+
+            wordGuessInput.value = ''; // Clear input
+
+            // Check if all letters are revealed (word completion)
+            const plainAnswerStripped = currentQuestion.plainAnswer.filter(char => char !== ' ').join('').toUpperCase();
+            const currentRevealedStripped = revealedLetters.filter(char => char !== ' ').join('');
+
+            if (currentRevealedStripped === plainAnswerStripped) {
+                // Clear any existing notifications before showing new ones
+                notificationContainer.innerHTML = ''; 
+
+                // Show main completion message after a short delay
+                setTimeout(() => {
+                    showNotification(`Chúc mừng! Bạn đã hoàn thành toàn bộ từ!`, 'success', 3500, 'cheer');
+                    launchConfetti(); // Launch confetti effect immediately with cheer
+                }, 500); // Small delay to let previous notification finish its sound/fade
+
+                // Then show "Press spin" message after confetti starts
+                setTimeout(() => {
+                    showNotification(`Nhấn "Quay" để chơi tiếp!`, 'info', 3500, 'notification6');
+                }, 2000); // Delay for "Quay" message after main completion message
+
+                setTimeout(() => {
+                    console.log("Calling resetGameRound after word completion.");
+                    resetGameRound();
+                }, 5500); // Total delay before resetting game round
+            }
+        }
+
+        /**
+         * Reveals all letters of the current word with 3D flip effect.
+         */
+        function revealAllLetters() {
+            if (!currentQuestion) return;
+            currentQuestion.plainAnswer.forEach((char, index) => {
+                if (char !== ' ') {
+                    revealedLetters[index] = char;
+                    const letterBox = wordDisplayContainer.querySelector(`.word-letter-box[data-index="${index}"]`);
+                    if (letterBox && !letterBox.classList.contains('revealed')) {
+                        letterBox.classList.add('revealed');
+                    }
+                }
+            });
+        }
+
+        /**
+         * Buys a letter, revealing a random unrevealed one with 3D flip.
+         */
+        function buyLetter() {
+            if (!canGuess || playerScore < 500) {
+                showNotification('Không đủ 500 điểm để mua chữ!', 'error', 3000, 'notification5');
+                return;
+            }
+            if (!currentQuestion) {
+                 showNotification('Không có câu hỏi để mua chữ!', 'info', 3000, 'notification1');
+                 return;
+            }
+
+            const unrevealedIndices = [];
+            currentQuestion.plainAnswer.forEach((char, index) => {
+                if (char !== ' ' && revealedLetters[index] === '') {
+                    unrevealedIndices.push(index);
+                }
+            });
+
+            if (unrevealedIndices.length === 0) {
+                showNotification('Không còn chữ nào để mua!', 'info', 3000, 'notification1');
+                return;
+            }
+
+            updateScore(-500); // Deduct 500 points
+            // Chỉ thông báo trừ điểm và mở chữ, dùng notification8
+            showNotification('Bạn đã mua một chữ với giá 500 điểm! Một chữ đã được tiết lộ.', 'info', 3000, 'notification8'); 
+            
+            const randomIndex = Math.floor(Math.random() * unrevealedIndices.length);
+            const indexToReveal = unrevealedIndices[randomIndex];
+            revealedLetters[indexToReveal] = currentQuestion.plainAnswer[indexToReveal];
+
+            const letterBox = wordDisplayContainer.querySelector(`.word-letter-box[data-index="${indexToReveal}"]`);
+            if (letterBox) {
+                letterBox.classList.add('revealed');
+            }
+
+            // Kiểm tra xem việc mua chữ có hoàn thành từ hay không
+            const plainAnswerStripped = currentQuestion.plainAnswer.filter(char => char !== ' ').join('').toUpperCase();
+            const currentRevealedStripped = revealedLetters.filter(char => char !== ' ').join('');
+            
+            if (currentRevealedStripped === plainAnswerStripped) {
+                // Clear any existing notifications before showing new ones
+                notificationContainer.innerHTML = ''; 
+
+                // Show main completion message after a short delay
+                setTimeout(() => {
+                    showNotification(`Chúc mừng! Bạn đã hoàn thành toàn bộ từ!`, 'success', 3500, 'cheer');
+                    launchConfetti(); // Launch confetti effect immediately with cheer
+                }, 500); // Small delay to let previous notification finish its sound/fade
+
+                // Then show "Press spin" message after confetti starts
+                setTimeout(() => {
+                    showNotification(`Nhấn "Quay" để chơi tiếp!`, 'info', 3500, 'notification6');
+                }, 2000); // Delay for "Quay" message after main completion message
+
+                setTimeout(() => {
+                    console.log("Calling resetGameRound after word completion.");
+                    resetGameRound();
+                }, 5500); // Total delay before resetting game round
+            }
+        }
+
+        /**
+         * Reveals a single random unrevealed letter (used for "May mắn" segment).
+         */
+        function revealRandomLetter() {
+            if (!currentQuestion) return;
+
+            const unrevealedIndices = [];
+            currentQuestion.plainAnswer.forEach((char, index) => {
+                if (char !== ' ' && revealedLetters[index] === '') {
+                    unrevealedIndices.push(index);
+                }
+            });
+
+            if (unrevealedIndices.length === 0) {
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * unrevealedIndices.length);
+            const indexToReveal = unrevealedIndices[randomIndex];
+            revealedLetters[indexToReveal] = currentQuestion.plainAnswer[indexToReveal];
+
+            const letterBox = wordDisplayContainer.querySelector(`.word-letter-box[data-index="${indexToReveal}"]`);
+            if (letterBox) {
+                letterBox.classList.add('revealed');
+            }
+            // Message for lucky is handled in handleSpinResult, this just reveals
+        }
+
+        /**
+         * Launches a confetti celebration effect.
+         */
+        function launchConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f']; // Confetti colors
+            const numConfetti = 100; // Number of confetti particles
+            const confettiContainer = document.getElementById('confetti-container'); // Ensure this is correctly fetched
+
+            for (let i = 0; i < numConfetti; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                // Random starting position and trajectory
+                const startX = Math.random() * window.innerWidth;
+                const startY = Math.random() * window.innerHeight * 0.2 - 50; // Start slightly above top
+                const endX = startX + (Math.random() - 0.5) * 400; // Spread horizontally
+                const endY = window.innerHeight + 100; // Fall past bottom
+
+                confetti.style.setProperty('--x', `${startX}px`);
+                confetti.style.setProperty('--y', `${startY}px`);
+                confetti.style.setProperty('--x-end', `${endX}px`);
+                confetti.style.setProperty('--y-end', `${endY}px`);
+
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.animationDuration = `${2 + Math.random() * 2}s`; // 2-4 seconds fall
+
+                confettiContainer.appendChild(confetti);
+
+                // Remove confetti after animation to clean up DOM
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
+        /**
+         * Resets the game state for a new round after a word is completed.
+         */
+        function resetGameRound() {
+            console.log("resetGameRound called.");
+            currentQuestion = null;
+            revealedLetters = [];
+            currentSegmentValue = 0;
+
+            // Remove 'active' from all sections
+            welcomeScreen.classList.remove('active');
+            instructionsScreen.classList.remove('active');
+            
+            // Add 'active' to gameScreen
+            gameScreen.classList.add('active'); 
+            console.log("gameScreen should be active now.");
+
+            questionDisplay.textContent = "Mời bạn quay để chọn câu hỏi và số điểm";
+            questionDisplay.classList.add('flashing'); // Make it flash again
+            wordGuessInput.value = '';
+            wordDisplayContainer.innerHTML = ''; // Clear the word display
+
+            canGuess = false; // Player must spin again
+            isSpinning = false; // Ensure not spinning
+            updateButtonStates(); // Re-enable spin button
+
+            // Cuộn lên đầu màn hình game để người dùng thấy vòng quay ngay lập tức
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            showNotification(`Để chọn từ mới, mời bạn nhấn nút "Quay"`, 'info', 4000, 'notification7');
+        }
+
+
+        // --- Event Listeners ---
+        window.onload = () => {
+            renderWheel(); // Render wheel segments on load
+            updateButtonStates(); // Initialize button state
+        };
+
+        toggleInstructionsButton.addEventListener('click', () => {
+            console.log("Toggle Instructions clicked.");
+            welcomeScreen.classList.remove('active');
+            instructionsScreen.classList.add('active');
+            if (backgroundMusic.paused) { // Play music on first interaction
+                backgroundMusic.play().catch(e => console.error("Error playing background music:", e));
+            }
+        });
+
+        backToWelcomeButton.addEventListener('click', () => {
+            console.log("Back to Welcome clicked.");
+            instructionsScreen.classList.remove('active');
+            welcomeScreen.classList.add('active');
+        });
+
+        startGameButton.addEventListener('click', () => {
+            console.log("Start Game clicked.");
+            welcomeScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            updateScore(0); // Reset score for new game
+            resetGameRound(); // Use the reset function for a clean start
+            // Music already handled by toggleMusicButton's initial state if it was played on welcome screen
+        });
+
+        toggleMusicButton.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().catch(e => console.error("Error playing background music:", e));
+                // Không truyền soundToPlay để chỉ hiện thông báo chữ, không phát âm thanh thông báo
+                showNotification('Nhạc nền đã BẬT', 'info', 2000, null); 
+            } else {
+                backgroundMusic.pause();
+                // Không truyền soundToPlay để chỉ hiện thông báo chữ, không phát âm thanh thông báo
+                showNotification('Nhạc nền đã TẮT', 'info', 2000, null); 
+            }
+        });
+
+        spinButton.addEventListener('click', spinWheel);
+        submitGuessButton.addEventListener('click', handleGuess);
+        buyLetterButton.addEventListener('click', buyLetter);
+
+        // Allow pressing Enter key for guessing
+        wordGuessInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleGuess();
+            }
+        });
+    </script>
+</body>
+</html>
