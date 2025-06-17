@@ -484,6 +484,15 @@ section.active {
     border-top: 1px solid #eee; /* Đường kẻ mỏng phía trên */
 }
 
+/* Custom styles for smaller score display */
+.score-display-text {
+    font-size: 1.5rem; /* Smaller than 2xl */
+}
+@media (min-width: 640px) { /* Adjust for sm breakpoint and up */
+    .score-display-text {
+        font-size: 1.75rem; /* Slightly larger on larger screens, still smaller than original 2xl */
+    }
+}
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
