@@ -417,7 +417,9 @@
                 revealRandomLetter(); // Tự động tiết lộ một chữ cái
                 message = `Một chữ đã mở và ba trăm điểm đã được cộng vào!`;
                 notificationSound = 'tb4';
-                canGuess = false; // Keep guess input disabled, force another spin
+                // After 'lucky', check for word completion. If not complete, force another spin.
+                // If complete, wordCompletionCheck will handle the state.
+                checkWordCompletion(); // IMPORTANT: Check for completion right after revealing lucky letter
             }
             // The question is already set if hasQuestionBeenSelected is true
             showNotification(message, 'info', 3000, notificationSound);
@@ -460,6 +462,41 @@
         }
 
         /**
+         * Checks if the word is fully revealed and handles completion.
+         * This function is now reusable for both guesses and 'buy letter'/'lucky' reveals.
+         */
+        function checkWordCompletion() {
+            if (!currentQuestion) return false;
+
+            const plainAnswerStripped = currentQuestion.plainAnswer.filter(char => char !== ' ').join('').toUpperCase();
+            const currentRevealedStripped = revealedLetters.filter(char => char !== ' ').join('');
+
+            if (currentRevealedStripped === plainAnswerStripped) {
+                totalQuestionsAnswered++; // Increment total answered questions
+                // Clear any existing notifications before showing new ones
+                notificationContainer.innerHTML = ''; 
+
+                // Show main completion message after a short delay
+                setTimeout(() => {
+                    showNotification(`Chúc mừng! Bạn đã hoàn thành toàn bộ từ!`, 'success', 3500, 'tb8');
+                    launchConfetti(); // Launch confetti effect immediately with cheer
+                }, 500); // Small delay to let previous notification finish its sound/fade
+
+                // Then show "Press spin" message after confetti starts
+                setTimeout(() => {
+                    showNotification(`Nhấn "Quay" để chơi tiếp!`, 'info', 3500, 'tb9');
+                }, 4000); // Changed delay to 4000ms (1.5s after tb8 starts, assuming tb8 plays for 3s)
+
+                setTimeout(() => {
+                    console.log("Calling resetGameRound after word completion.");
+                    resetGameRound();
+                }, 7500); // Changed total delay to 7500ms (3.5s after tb9 starts)
+                return true;
+            }
+            return false;
+        }
+
+        /**
          * Handles the player's guess (letter or full word).
          */
         function handleGuess() {
@@ -475,7 +512,6 @@
             const guessStripped = guess.replace(/ /g, '');
 
             let pointsChange = 0;
-            let correctGuessMade = false;
             let notificationMessage = '';
 
             if (guess.length === 1) { // Single letter guess
@@ -507,7 +543,6 @@
                         notificationMessage = `Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng! (+${pointsChange} điểm)`;
                     }
                     showNotification(notificationMessage, 'success', 3000, 'tb6');
-                    correctGuessMade = true;
                 } else {
                     pointsChange = -300;
                     updateScore(pointsChange);
@@ -549,7 +584,6 @@
                         showNotification(notificationMessage, 'success', 3000, 'tb8');
                     }
                     revealAllLetters(); // Reveal all letters with flip effect
-                    correctGuessMade = true;
                 } else {
                     pointsChange = -300;
                     updateScore(pointsChange);
@@ -559,38 +593,12 @@
 
             wordGuessInput.value = ''; // Clear input
 
-            // Check if all letters are revealed (word completion)
-            const plainAnswerStripped = currentQuestion.plainAnswer.filter(char => char !== ' ').join('').toUpperCase();
-            const currentRevealedStripped = revealedLetters.filter(char => char !== ' ').join('');
-
-            if (currentRevealedStripped === plainAnswerStripped) {
-                totalQuestionsAnswered++; // Increment total answered questions
-                // Clear any existing notifications before showing new ones
-                notificationContainer.innerHTML = ''; 
-
-                // Show main completion message after a short delay
-                setTimeout(() => {
-                    showNotification(`Chúc mừng! Bạn đã hoàn thành toàn bộ từ!`, 'success', 3500, 'tb8');
-                    launchConfetti(); // Launch confetti effect immediately with cheer
-                }, 500); // Small delay to let previous notification finish its sound/fade
-
-                // Then show "Press spin" message after confetti starts
-                setTimeout(() => {
-                    showNotification(`Nhấn "Quay" để chơi tiếp!`, 'info', 3500, 'tb9');
-                }, 4000); // Changed delay to 4000ms (1.5s after tb8 starts, assuming tb8 plays for 3s)
-
-                setTimeout(() => {
-                    console.log("Calling resetGameRound after word completion.");
-                    resetGameRound();
-                }, 7500); // Changed total delay to 7500ms (3.5s after tb9 starts)
-            
-                } else {
-                    // Nếu từ chưa hoàn thành → cuộn về lại vòng quay
-                    canGuess = false; // Disable guess input
-                    updateButtonStates(); // Enable spin
-                    spinButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-
+            if (!checkWordCompletion()) {
+                // Nếu từ chưa hoàn thành → cuộn về lại vòng quay
+                canGuess = false; // Disable guess input
+                updateButtonStates(); // Enable spin
+                spinButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         /**
@@ -657,33 +665,7 @@
             }
 
             // Check if buying a letter completed the word
-            const plainAnswerStripped = currentQuestion.plainAnswer.filter(char => char !== ' ').join('').toUpperCase();
-            const currentRevealedStripped = revealedLetters.filter(char => char !== ' ').join('');
-            
-            if (currentRevealedStripped === plainAnswerStripped) {
-                totalQuestionsAnswered++; // Increment total answered questions
-                // Clear any existing notifications before showing new ones
-                notificationContainer.innerHTML = ''; 
-
-                // Show main completion message after a short delay
-                setTimeout(() => {
-                    showNotification(`Chúc mừng! Bạn đã hoàn thành toàn bộ từ!`, 'success', 3500, 'tb8');
-                    launchConfetti(); // Launch confetti effect immediately with cheer
-                }, 500); // Small delay to let previous notification finish its sound/fade
-
-                // Then show "Press spin" message after confetti starts
-                setTimeout(() => {
-                    showNotification(`Nhấn "Quay" để chơi tiếp!`, 'info', 3500, 'tb9');
-                }, 4000);
-
-                setTimeout(() => {
-                    console.log("Calling resetGameRound after word completion.");
-                    resetGameRound();
-                }, 7500);
-            } else {
-                // If word is NOT completed, revert canGuess to its state before buying letter
-                // Or if we want to force a spin after buying, then canGuess = false.
-                // Based on "vòng quay lại mở" implies forcing a spin.
+            if (!checkWordCompletion()) { // If not complete, force another spin.
                 canGuess = false; // Force spin after buying a letter
                 updateButtonStates(); // Re-enable spin button
             }
