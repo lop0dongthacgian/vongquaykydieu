@@ -504,7 +504,7 @@
 
             const guess = wordGuessInput.value.trim().toUpperCase();
             if (guess === '') {
-                showNotification('Vui lòng nhập một chữ cái vào ô!', 'info', 8000, 'tb5');
+                showNotification('Vui lòng nhập một chữ cái vào ô!', 'info', 9000, 'tb5');
                 return;
             }
 
@@ -542,11 +542,11 @@
                         updateScore(pointsChange);
                         notificationMessage = `Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng! (+${pointsChange} điểm)`;
                     }
-                    showNotification(notificationMessage, 'success', 8000, 'tb6');
+                    showNotification(notificationMessage, 'success', 9000, 'tb6');
                 } else {
                     pointsChange = -300;
                     updateScore(pointsChange);
-                    showNotification(`Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!`, 'error', 8000, 'tb7');
+                    showNotification(`Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!`, 'error', 9000, 'tb7');
                 }
             } else { // Full word guess
                 if (guessStripped === plainAnswerString) {
@@ -554,7 +554,7 @@
                         pointsChange = playerScore; // Doubles current score
                         updateScore(pointsChange);
                         notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ đáp án! Điểm của bạn được nhân đôi!`;
-                        showNotification(notificationMessage, 'success', 6000, 'tb8');
+                        showNotification(notificationMessage, 'success', 9000, 'tb8');
                     } else if (typeof currentSegmentValue === 'number' || currentSegmentValue === 'lucky') {
                         let unrevealedCount = 0;
                         for (let i = 0; i < currentQuestion.plainAnswer.length; i++) {
@@ -576,18 +576,18 @@
                         }
                         updateScore(pointsChange);
                         notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ đáp án! Đã được cộng ${pointsChange} điểm!`;
-                        showNotification(notificationMessage, 'success', 6000, 'tb8');
+                        showNotification(notificationMessage, 'success', 9000, 'tb8');
                     } else { // Fallback for other special segments if needed
                         pointsChange = 300; // Default bonus for full word guess
                         updateScore(pointsChange);
                         notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ đáp án! Đã được cộng ${pointsChange} điểm!`;
-                        showNotification(notificationMessage, 'success', 6000, 'tb8');
+                        showNotification(notificationMessage, 'success', 9000, 'tb8');
                     }
                     revealAllLetters(); // Reveal all letters with flip effect
                 } else {
                     pointsChange = -300;
                     updateScore(pointsChange);
-                    showNotification(`Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!`, 'error', 8000, 'tb7');
+                    showNotification(`Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!`, 'error', 9000, 'tb7');
                 }
             }
 
@@ -622,11 +622,11 @@
          */
         function buyLetter() {
             if (!currentQuestion) {
-                 showNotification('Không có câu hỏi để mua chữ!', 'info', 6000, 'tb11');
+                 showNotification('Không có câu hỏi để mua chữ!', 'info', 9000, 'tb11');
                  return;
             }
             if (playerScore < 500) {
-                showNotification('Không đủ 500 điểm để mua chữ!', 'error', 6000, 'tb10');
+                showNotification('Không đủ 500 điểm để mua chữ!', 'error', 9000, 'tb10');
                 return;
             }
             // Temporarily disable canGuess to prevent interaction while buying letter
@@ -644,7 +644,7 @@
             });
 
             if (unrevealedIndices.length === 0) {
-                showNotification('Không còn chữ nào để mua!', 'info', 6000, 'tb13');
+                showNotification('Không còn chữ nào để mua!', 'info', 9000, 'tb13');
                 // Re-enable canGuess if it was enabled before, as no letter was bought
                 canGuess = wasGuessEnabled;
                 updateButtonStates();
@@ -653,7 +653,7 @@
 
             updateScore(-500); // Deduct 500 points
             // Chỉ thông báo trừ điểm và mở chữ, dùng notification8
-            showNotification('Bạn đã mua một chữ với giá 500 điểm! Một chữ đã được hiển thị.', 'info', 8000, 'tb12');
+            showNotification('Bạn đã mua một chữ với giá 500 điểm! Một chữ đã được hiển thị.', 'info', 9000, 'tb12');
             
             const randomIndex = Math.floor(Math.random() * unrevealedIndices.length);
             const indexToReveal = unrevealedIndices[randomIndex];
@@ -799,7 +799,7 @@
 
             updateButtonStates(); // Ensure buttons are in correct state
             updateGameInfoDisplay(); // Update display for welcome screen
-            showNotification('Bạn đã thoát trò chơi, hẹn gặp lại!', 'info', 3000, 'tb15');
+            showNotification('Bạn đã thoát trò chơi, hẹn gặp lại!', 'info', 9000, 'tb15');
         }
 
 
