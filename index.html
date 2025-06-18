@@ -141,17 +141,17 @@
             tb1: new Audio('audio/tb1.wav'), // Mời bạn quay để chọn câu hỏi và số điểm
             tb2: new Audio('audio/tb2.wav'), // Mời bạn xem câu hỏi và nhập một chữ cái! Bạn quay được [số điểm] điểm.
             tb3: new Audio('audio/tb3.wav'), // Tuyệt vời! Nhân đôi điểm! Đoán đúng từ sẽ được nhân đôi điểm!
-            tb4: new Audio('audio/tb4.wav'), // Một chữ đã mở và ba trăm điểm đã được cộng vào!
+            tb4: new Audio('audio/tb4.wav'), // Bạn quay trúng ô "May mắn" Một chữ đã mở và cộng ba trăm điểm. Nhấn nút "Quay" để tiếp tục!
             tb5: new Audio('audio/tb5.wav'), // Vui lòng nhập một chữ cái!
             tb6: new Audio('audio/tb6.wav'), // Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng!
-            tb7: new Audio('audio/tb7.wav'), // Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!
-            tb8: new Audio('audio/tb8.wav'), // Chúc mừng! Bạn đã hoàn thành toàn bộ từ!
+            tb7: new Audio('audio/tb7.wav'), // Ôi, Bạn đoán sai rồi, bạn bị trừ ba trăm điểm!
+            tb8: new Audio('audio/tb8.wav'), // Chúc mừng! Bạn đã hoàn thành toàn bộ đáp án!
             tb9: new Audio('audio/tb9.wav'), // Nhấn "Quay" để chơi tiếp!
             tb10: new Audio('audio/tb10.wav'), // Không đủ 500 điểm để mua chữ!
             tb11: new Audio('audio/tb11.wav'), // Không có câu hỏi để mua chữ!
-            tb12: new Audio('audio/tb12.wav'), // Bạn đã mua một chữ với giá 500 điểm! Một chữ đã được tiết lộ.
+            tb12: new Audio('audio/tb12.wav'), // Bạn đã mua một chữ với giá 500 điểm! Một chữ đã được hiển thị.
             tb13: new Audio('audio/tb13.wav'), // Không còn chữ nào để mua!
-            tb14: new Audio('audio/tb14.wav'), // Để chọn từ mới, mời bạn nhấn nút "Quay"
+            tb14: new Audio('audio/tb14.wav'), // Để chọn câu hỏi và số điểm thưởng mời bạn nhấn nút "Quay"
             tb15: new Audio('audio/tb15.wav')  // Bạn đã thoát trò chơi, hẹn gặp lại nhé!
         };
 
@@ -415,7 +415,7 @@
             } else if (currentSegmentValue === 'lucky') {
                 updateScore(300); // Cộng 300 điểm ngay
                 revealRandomLetter(); // Tự động tiết lộ một chữ cái
-                message = `Một chữ đã mở và ba trăm điểm đã được cộng vào!`;
+                message = `Bạn quay trúng ô "May mắn" Một chữ đã mở và cộng ba trăm điểm.`;
                 notificationSound = 'tb4';
                 // After 'lucky', check for word completion. If not complete, force another spin.
                 // If complete, wordCompletionCheck will handle the state.
