@@ -123,8 +123,8 @@
 </ul>
 <p class="text-yellow-800"><i class="fas fa-trophy text-yellow-600 mr-2"></i> <strong>Bước 5:</strong> Quy tắc đặc biệt từ vòng quay:</p>
 <ul class="list-disc list-inside ml-6 space-y-1 text-sm text-gray-700">
-<li><i class="fas fa-coins text-orange-500 mr-2"></i> <b>“Nhân Đôi”</b>: Nếu điểm hiện tại **dương (trên 0)**, điểm của bạn sẽ được nhân đôi khi đoán đúng chữ cái hoặc từ.</li>
-<li><i class="fas fa-cut text-red-400 mr-2"></i> <b>“Chia Đôi”</b>: Nếu điểm hiện tại **dương (trên 0)**, điểm của bạn sẽ bị chia đôi. Khi đoán đúng chữ cái/từ sau đó, bạn vẫn nhận được **200 điểm/chữ cái** như bình thường.</li>
+<li><i class="fas fa-coins text-orange-500 mr-2"></i> <b>“Nhân Đôi”</b>: Nếu điểm hiện tại dương (trên 0), điểm của bạn sẽ được nhân đôi khi đoán đúng chữ cái hoặc từ.</li>
+<li><i class="fas fa-cut text-red-400 mr-2"></i> <b>“Chia Đôi”</b>: Nếu điểm hiện tại dương (trên 0), điểm của bạn sẽ bị chia đôi. Khi đoán đúng chữ cái/từ sau đó, bạn vẫn nhận được 200 điểm/chữ cái như bình thường.</li>
 <li><i class="fas fa-dice text-pink-500 mr-2"></i> <b>“May Mắn”</b>: Cộng 300 điểm và mở ngẫu nhiên 1 chữ cái trong từ.</li>
 </ul>
 <p class="text-indigo-800"><i class="fas fa-magic text-indigo-400 mr-2"></i> <strong>Bước 6:</strong> Nhấn <b>"Mua chữ"</b> để mở 1 chữ cái bất kỳ (trừ 500 điểm).</p>
@@ -460,7 +460,7 @@
                 canGuess = true; // Enable guess input for points
             } else if (currentSegmentValue === 'double_current') {
                 if (playerScore > 0) {
-                    message = `Tuyệt vời! Nhân đôi điểm! Đoán đúng chữ cái sẽ nhân đôi điểm!`;
+                    message = `Tuyệt vời! Nhân đôi điểm! Đoán đúng chữ cái sẽ nhân đôi tổng số điểm!`;
                     notificationSound = 'tb3';
                     canGuess = true;
                 } else {
@@ -480,7 +480,7 @@
                 if (playerScore > 0) {
                     playerScore = Math.floor(parseFloat(playerScore) / 2); // Halve current score, ensure it's a number
                     updateGameInfoDisplay();
-                    message = `Ôi, điểm của bạn đã bị chia đôi! Hãy cẩn thận!`; // Changed message
+                    message = `Ôi, điểm của bạn đã bị chia đôi!`; // Changed message
                     notificationSound = 'tb19'; // New sound for halving points
                     canGuess = true; // Player can still guess after halving their score
                 } else {
@@ -628,7 +628,7 @@
                     if (currentSegmentValue === 'double_current' && playerScore > 0) { // Check playerScore > 0 for doubling
                         pointsChange = playerScore; // This will double current score
                         updateScore(pointsChange);
-                        notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ đáp án! Điểm của bạn được nhân đôi!`;
+                        notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ đáp án!`;
                         showNotification(notificationMessage, 'success', 12000, 'tb8');
                     } else if (currentSegmentValue === 'double_current' && playerScore <= 0) {
                          // If currentSegmentValue is 'double_current' but score is 0 or less, no doubling, just regular points
@@ -676,7 +676,7 @@
                 } else {
                     pointsChange = -300;
                     updateScore(pointsChange);
-                    showNotification(`Ôi, chưa đúng rồi, bạn bị trừ ba trăm điểm!`, 'error', 12000, 'tb7');
+                    showNotification(`Ôi, sai rồi, bạn bị trừ ba trăm điểm!`, 'error', 12000, 'tb7');
                 }
             }
 
