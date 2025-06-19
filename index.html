@@ -197,6 +197,7 @@
         let canGuess = false; // Controls if input/submit are active
         let currentSegmentValue = 0; // Stores the points/type awarded by the wheel
         let hasQuestionBeenSelected = false; // Track if a question has been selected for the current round
+        let doubleNotificationGiven = false; // New: Track if the "not enough to double" notification was given for current spin
 
         // Question tracking
         let currentQuestionNumber = 0; // The number of the current question being played (1-indexed)
@@ -398,6 +399,7 @@
 
             isSpinning = true;
             canGuess = false; // Disable guess input while spinning
+            doubleNotificationGiven = false; // Reset for new spin
             updateButtonStates(); // Hide spin button and clear spinner text
 
             // Only clear question display if it's a new word selection round
@@ -460,12 +462,13 @@
                 canGuess = true; // Enable guess input for points
             } else if (currentSegmentValue === 'double_current') {
                 if (playerScore > 0) {
-                    message = `Tuyệt vời! Nhân đôi điểm! Đoán đúng chữ cái sẽ nhân đôi tổng số điểm!`;
+                    message = `Tuyệt vời! Nhân đôi điểm! Đoán đúng từ sẽ được nhân đôi điểm!`;
                     notificationSound = 'tb3';
                     canGuess = true;
                 } else {
-                    message = `Điểm của bạn quá thấp để nhân đôi!`;
-                    notificationSound = 'tb20'; // New sound for not enough points to double
+                    message = `Điểm của bạn quá thấp để nhân đôi! Mời bạn nhập chữ đã đoán!`; // Updated message to be more explicit
+                    notificationSound = 'tb20'; 
+                    doubleNotificationGiven = true; // Mark that this notification was given
                     canGuess = true; // Still allow guessing for basic points
                 }
             } else if (currentSegmentValue === 'lucky') {
@@ -600,24 +603,31 @@
                         pointsChange = playerScore; // Points to add will be the current score
                         updateScore(pointsChange); // This effectively doubles the score
                         notificationMessage = `Chính xác, bạn đã đoán đúng rồi! Điểm của bạn đã được nhân đôi!`;
+                        showNotification(notificationMessage, 'success', 12000, 'tb6'); 
                     } else if (currentSegmentValue === 'double_current' && playerScore <= 0) {
                         // If currentSegmentValue is 'double_current' but score is 0 or less, no doubling, just regular points
                         pointsChange = 200 * lettersFoundThisTurn; // Award base points for correct guess
+                        updateScore(pointsChange);
                         notificationMessage = `Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng! (+${pointsChange} điểm)`;
-                        showNotification(`Điểm của bạn quá thấp để nhân đôi!`, 'info', 3000, 'tb20'); // Inform user
+                        showNotification(notificationMessage, 'success', 12000, 'tb6');
+                        // No tb20 here, it's already given in handleSpinResult
                     }
                     else if (typeof currentSegmentValue === 'number') {
                         pointsChange = currentSegmentValue * lettersFoundThisTurn;
                         notificationMessage = `Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng! (+${pointsChange} điểm)`;
+                        updateScore(pointsChange);
+                        showNotification(notificationMessage, 'success', 12000, 'tb6'); 
                     } else if (currentSegmentValue === 'lucky') {
                         pointsChange = 100 * lettersFoundThisTurn; // Small bonus per letter for 'lucky' segment
                         notificationMessage = `Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng! (+${pointsChange} điểm)`;
+                        updateScore(pointsChange);
+                        showNotification(notificationMessage, 'success', 12000, 'tb6'); 
                     } else { // 'halve' or other future special segments, award a default
                         pointsChange = 200 * lettersFoundThisTurn; // <-- This is for 'halve' too
                         notificationMessage = `Chính xác, bạn đã đoán đúng rồi, điểm đã được cộng! (+${pointsChange} điểm)`;
+                        updateScore(pointsChange);
+                        showNotification(notificationMessage, 'success', 12000, 'tb6'); 
                     }
-                    updateScore(pointsChange);
-                    showNotification(notificationMessage, 'success', 12000, 'tb6'); // May need a new sound for 'double_current' letter guess success
                 } else {
                     pointsChange = -300;
                     updateScore(pointsChange);
@@ -642,7 +652,7 @@
                         updateScore(pointsChange);
                         notificationMessage = `Chúc mừng! Bạn đã hoàn thành toàn bộ đáp án! Đã được cộng ${pointsChange} điểm!`;
                         showNotification(notificationMessage, 'success', 12000, 'tb8');
-                        showNotification(`Điểm của bạn quá thấp để nhân đôi!`, 'info', 3000, 'tb20'); // Inform user
+                        // No tb20 here, it's already given in handleSpinResult
                     }
                     else if (typeof currentSegmentValue === 'number' || currentSegmentValue === 'lucky' || currentSegmentValue === 'halve') {
                         let unrevealedCount = 0;
@@ -833,7 +843,8 @@
             revealedLetters = [];
             currentSegmentValue = 0;
             hasQuestionBeenSelected = false; // Reset for a new word selection
-
+            doubleNotificationGiven = false; // Reset double notification flag
+            
             // Ensure only gameScreen is active or set to welcomeScreen
             welcomeScreen.classList.remove('active');
             instructionsScreen.classList.remove('active');
@@ -870,6 +881,8 @@
             hasQuestionBeenSelected = false; // Reset for a clean exit
             currentQuestionNumber = 0; // Reset question count
             totalQuestionsAnswered = 0; // Reset total answered
+            doubleNotificationGiven = false; // Reset double notification flag
+
 
             playerScoreDisplay.textContent = '0';
             questionDisplay.textContent = "Mời bạn quay để chọn câu hỏi và số điểm";
